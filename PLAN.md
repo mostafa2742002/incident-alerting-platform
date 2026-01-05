@@ -63,3 +63,27 @@ com.example.incidentplatform
   - time
   - ids
   - utils
+
+
+
+## Product story
+
+### The problem
+Many teams receive lots of system events (errors, CPU spikes, failed jobs). Without rules and routing, people miss critical issues or get spammed.
+
+### The users
+- A company ("tenant") with multiple users.
+- Roles control who can manage rules vs only view incidents.
+
+### How it works (high level)
+1) A tenant configures alert rules (e.g., "if event type=PAYMENT_FAILED then create incident").
+2) Systems send events to an ingest API (with an idempotency key so retries don't duplicate).
+3) The app evaluates rules and opens/updates incidents.
+4) Users get notified in real time (WebSocket) and via “email simulation”.
+5) Everything important is recorded in an audit log.
+
+### Core concepts
+- Event: a signal sent by a system (has type, severity, timestamp, attributes).
+- Alert Rule: a tenant-defined condition that turns events into incidents.
+- Incident: a tracked problem that can be OPEN/ACKED/RESOLVED.
+- Tenant: a company boundary for data + security.
