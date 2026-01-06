@@ -3,6 +3,7 @@ package com.example.incidentplatform.common.error;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -35,4 +36,24 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiValidationError> handleValidation(
+        MethodArgumentNotValidException ex,
+        HttpServletRequest request
+    ) {
+        var violations = ex.getBindingResult().getFieldErrors().stream()
+                .map(fe -> new ApiValidationError.FieldViolation(fe.getField(), fe.getDefaultMessage()))
+                .toList();
+
+        ApiValidationError body = new ApiValidationError(
+                Instant.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                "Validation failed",
+                request.getRequestURI(),
+                violations
+        );
+
+        return ResponseEntity.badRequest().body(body);
+    }
 }
