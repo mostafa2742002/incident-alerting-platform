@@ -27,4 +27,9 @@ public class JpaTenantRepositoryAdapter implements TenantRepository {
         var saved = tenantJpaRepository.save(TenantMapper.toEntity(tenant));
         return TenantMapper.toDomain(saved);
     }
+
+    @Override
+    public Optional<Tenant> findById(java.util.UUID id) {
+        return tenantJpaRepository.findById(id).map(TenantMapper::toDomain);
+    }
 }

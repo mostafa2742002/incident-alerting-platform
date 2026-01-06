@@ -3,8 +3,11 @@ package com.example.incidentplatform.api.controller;
 import com.example.incidentplatform.api.dto.CreateTenantRequest;
 import com.example.incidentplatform.api.dto.TenantResponse;
 import com.example.incidentplatform.application.usecase.CreateTenantUseCase;
+import com.example.incidentplatform.application.usecase.GetTenantUseCase;
 import com.example.incidentplatform.domain.model.Tenant;
 import jakarta.validation.Valid;
+
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +18,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class TenantSignupController {
 
     private final CreateTenantUseCase createTenantUseCase;
+    private final GetTenantUseCase getTenantUseCase;
 
-    public TenantSignupController(CreateTenantUseCase createTenantUseCase) {
+    public TenantSignupController(CreateTenantUseCase createTenantUseCase, GetTenantUseCase getTenantUseCase) {
         this.createTenantUseCase = createTenantUseCase;
+        this.getTenantUseCase = getTenantUseCase;
     }
 
     @PostMapping
@@ -33,5 +38,13 @@ public class TenantSignupController {
 
         return ResponseEntity.created(location).body(body);
     }
+
+    @GetMapping("/{id}")
+    public TenantResponse getById(@PathVariable UUID id) {
+        Tenant tenant = getTenantUseCase.get(id);
+        return new TenantResponse(tenant.id(), tenant.slug(), tenant.name(), tenant.status().name());
+    }
+
+
 
 }
