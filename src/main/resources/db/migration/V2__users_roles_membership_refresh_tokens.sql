@@ -75,4 +75,5 @@ CREATE INDEX idx_refresh_tokens_expires_at ON refresh_tokens(expires_at);
 INSERT INTO roles (code, name) VALUES
 ('OWNER', 'Tenant Owner'),
 ('ADMIN', 'Tenant Admin'),
-('MEMBER', 'Tenant Member');
+('MEMBER', 'Tenant Member')
+ON CONFLICT (code) DO NOTHING;
