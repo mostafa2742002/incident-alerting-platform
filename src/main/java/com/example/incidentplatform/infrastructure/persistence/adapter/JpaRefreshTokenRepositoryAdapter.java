@@ -36,4 +36,9 @@ public class JpaRefreshTokenRepositoryAdapter implements RefreshTokenRepository 
         // Later we can change to “mark revoked_at” instead of delete if we want audit.
         jpa.deleteByUserId(userId);
     }
+
+    @Override
+    public void revokeByTokenHash(String tokenHash) {
+        jpa.deleteByTokenHash(tokenHash);
+    }
 }

@@ -1,7 +1,7 @@
 package com.example.incidentplatform.api.controller;
 
+import org.springframework.security.core.Authentication;
 import com.example.incidentplatform.api.dto.LoginRequest;
-import com.example.incidentplatform.api.dto.LoginResponse;
 import com.example.incidentplatform.api.dto.LoginTokenResponse;
 import com.example.incidentplatform.api.dto.RefreshRequest;
 import com.example.incidentplatform.api.dto.RefreshResponse;
@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/public/auth")
@@ -80,6 +81,20 @@ public class AuthPublicController {
         var result = refreshAuthUseCase.execute(request.refreshToken());
         return ResponseEntity.ok(new RefreshResponse(result.accessToken(), result.refreshToken(), result.tokenType()));
     }
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(Authentication authentication) {
+        if (authentication == null || authentication.getName() == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        UUID userId = UUID.fromString(authentication.getName());
+
+        refreshTokenService.revokeAll(userId);
+        return ResponseEntity.noContent().build();
+    }
+
 
 
 }
