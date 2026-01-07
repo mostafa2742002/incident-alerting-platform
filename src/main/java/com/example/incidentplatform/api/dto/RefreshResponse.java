@@ -1,6 +1,6 @@
 package com.example.incidentplatform.api.dto;
 
-public record LoginTokenResponse(
+public record RefreshResponse(
         String accessToken,
         String refreshToken,
         String tokenType

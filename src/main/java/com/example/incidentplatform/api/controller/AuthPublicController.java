@@ -3,9 +3,13 @@ package com.example.incidentplatform.api.controller;
 import com.example.incidentplatform.api.dto.LoginRequest;
 import com.example.incidentplatform.api.dto.LoginResponse;
 import com.example.incidentplatform.api.dto.LoginTokenResponse;
+import com.example.incidentplatform.api.dto.RefreshRequest;
+import com.example.incidentplatform.api.dto.RefreshResponse;
 import com.example.incidentplatform.api.dto.RegisterUserRequest;
 import com.example.incidentplatform.api.dto.UserResponse;
+import com.example.incidentplatform.application.service.RefreshTokenService;
 import com.example.incidentplatform.application.usecase.LoginUseCase;
+import com.example.incidentplatform.application.usecase.RefreshAuthUseCase;
 import com.example.incidentplatform.application.usecase.RegisterUserUseCase;
 import com.example.incidentplatform.domain.model.User;
 import com.example.incidentplatform.infrastructure.security.JwtTokenService;
@@ -23,12 +27,21 @@ public class AuthPublicController {
     private final RegisterUserUseCase registerUserUseCase;
     private final LoginUseCase loginUseCase;
     private final JwtTokenService jwtTokenService;
+    private final RefreshAuthUseCase refreshAuthUseCase;
+    private final RefreshTokenService refreshTokenService;
 
 
-    public AuthPublicController(RegisterUserUseCase registerUserUseCase, LoginUseCase loginUseCase, JwtTokenService jwtTokenService) {
+
+    public AuthPublicController(RegisterUserUseCase registerUserUseCase,
+            LoginUseCase loginUseCase,
+            JwtTokenService jwtTokenService,
+            RefreshAuthUseCase refreshAuthUseCase,
+            RefreshTokenService refreshTokenService) {
         this.registerUserUseCase = registerUserUseCase;
         this.loginUseCase = loginUseCase;
         this.jwtTokenService = jwtTokenService;
+        this.refreshAuthUseCase = refreshAuthUseCase;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @PostMapping("/register")
@@ -53,8 +66,19 @@ public class AuthPublicController {
     @PostMapping("/login")
     public ResponseEntity<LoginTokenResponse> login(@Valid @RequestBody LoginRequest request) {
         User user = loginUseCase.execute(request.email(), request.password());
-        String token = jwtTokenService.generateAccessToken(user);
-        return ResponseEntity.ok(new LoginTokenResponse(token, "Bearer"));
+
+        String accessToken = jwtTokenService.generateAccessToken(user);
+        String refreshToken = refreshTokenService.issueToken(user.id());
+
+        return ResponseEntity.ok(new LoginTokenResponse(accessToken, refreshToken, "Bearer"));
+    }
+
+
+
+    @PostMapping("/refresh")
+    public ResponseEntity<RefreshResponse> refresh(@Valid @RequestBody RefreshRequest request) {
+        var result = refreshAuthUseCase.execute(request.refreshToken());
+        return ResponseEntity.ok(new RefreshResponse(result.accessToken(), result.refreshToken(), result.tokenType()));
     }
 
 

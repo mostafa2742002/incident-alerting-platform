@@ -4,6 +4,7 @@ import com.example.incidentplatform.application.port.RefreshTokenRepository;
 import com.example.incidentplatform.common.error.UnauthorizedException;
 import com.example.incidentplatform.domain.model.RefreshToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -49,7 +50,10 @@ public class RefreshTokenService {
      * - revoke all tokens for the user
      * - issue a new one
      */
-    public String rotate(String rawToken) {
+    public record RotationResult(UUID userId, String newRefreshToken) {}
+
+    @Transactional
+    public RotationResult rotate(String rawToken) {
         String tokenHash = hash(rawToken);
 
         RefreshToken existing = refreshTokenRepository.findByTokenHash(tokenHash)
@@ -60,9 +64,12 @@ public class RefreshTokenService {
         }
 
         refreshTokenRepository.revokeAllByUserId(existing.userId());
-        return issueToken(existing.userId());
+        String newToken = issueToken(existing.userId());
+
+        return new RotationResult(existing.userId(), newToken);
     }
 
+    @Transactional
     public void revokeAll(UUID userId) {
         refreshTokenRepository.revokeAllByUserId(userId);
     }
