@@ -25,13 +25,18 @@ jobs:
           java-version: "21"
           cache: maven
 
-      - name: Start Postgres and Redis
+      - name: Start dependencies (Postgres + Redis)
         run: |
-          docker-compose -f docker-compose.yml up -d postgres redis
-          # Wait for Postgres to be healthy
-          dockerize -wait tcp://localhost:15432 -timeout 60s
-          # Wait for Redis to be healthy
-          dockerize -wait tcp://localhost:16379 -timeout 60s
+          docker compose up -d
+          for i in {1..30}; do
+            if docker compose exec -T postgres pg_isready -U incident -d incident_platform; then
+              echo "Postgres is ready"
+              break
+            fi
+            sleep 2
+          done
+          docker compose ps
+
 
       - name: Run tests
         run: ./mvnw -q test
