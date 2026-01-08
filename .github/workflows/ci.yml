@@ -25,5 +25,13 @@ jobs:
           java-version: "21"
           cache: maven
 
+      - name: Start Postgres and Redis
+        run: |
+          docker-compose -f docker-compose.yml up -d postgres redis
+          # Wait for Postgres to be healthy
+          dockerize -wait tcp://localhost:15432 -timeout 60s
+          # Wait for Redis to be healthy
+          dockerize -wait tcp://localhost:16379 -timeout 60s
+
       - name: Run tests
         run: ./mvnw -q test
