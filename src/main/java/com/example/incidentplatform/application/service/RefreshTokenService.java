@@ -63,7 +63,7 @@ public class RefreshTokenService {
             throw new UnauthorizedException("refresh token expired or revoked");
         }
 
-        refreshTokenRepository.revokeAllByUserId(existing.userId());
+        refreshTokenRepository.revokeByTokenHash(tokenHash);
         String newToken = issueToken(existing.userId());
 
         return new RotationResult(existing.userId(), newToken);
