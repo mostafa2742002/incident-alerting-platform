@@ -2,12 +2,12 @@ package com.example.incidentplatform.api.controller;
 
 import com.example.incidentplatform.application.usecase.CreateTenantUserUseCase;
 import com.example.incidentplatform.api.dto.TenantUserResponse;
+import com.example.incidentplatform.api.dto.AddMembershipRequest;
 import com.example.incidentplatform.api.dto.AddMembershipResponse;
 import com.example.incidentplatform.api.dto.RemoveMembershipResponse;
 import com.example.incidentplatform.api.dto.MembershipCheckResponse;
 import com.example.incidentplatform.domain.model.RoleCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -25,19 +25,16 @@ public class TenantUserController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
     public ResponseEntity<AddMembershipResponse> addUserToTenant(
             @PathVariable UUID tenantId,
-            @RequestParam UUID userId,
-            @RequestParam RoleCode roleCode) {
+            @RequestBody AddMembershipRequest request) {
 
-        createTenantUserUseCase.execute(tenantId, userId, roleCode);
-        var res = new AddMembershipResponse(null, tenantId, userId, roleCode, java.time.Instant.now());
+        createTenantUserUseCase.execute(tenantId, request.userId(), request.roleCode());
+        var res = new AddMembershipResponse(null, tenantId, request.userId(), request.roleCode(), java.time.Instant.now());
         return ResponseEntity.ok(res);
     }
 
     @DeleteMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
     public ResponseEntity<RemoveMembershipResponse> removeUserFromTenant(
             @PathVariable UUID tenantId,
             @RequestParam UUID userId) {
