@@ -17,7 +17,6 @@ import java.util.UUID;
 @Service
 public class RefreshTokenService {
 
-    // Simple default for now (we can move to application.properties later)
     private static final long REFRESH_TOKEN_TTL_DAYS = 30;
 
     private final RefreshTokenRepository refreshTokenRepository;
@@ -27,15 +26,10 @@ public class RefreshTokenService {
         this.refreshTokenRepository = refreshTokenRepository;
     }
 
-    /**
-     * Create + store refresh token; return RAW token to the client (only time they see it).
-     * DB stores only the hash.
-     */
     public String issueToken(UUID userId) {
         String rawToken = generateRawToken();
         String tokenHash = hash(rawToken);
 
-        // Domain logic uses Instant (timezone-independent)
         Instant expiresAt = Instant.now().plus(REFRESH_TOKEN_TTL_DAYS, ChronoUnit.DAYS);
 
         RefreshToken refreshToken = RefreshToken.createNew(userId, tokenHash, expiresAt);
@@ -43,13 +37,7 @@ public class RefreshTokenService {
 
         return rawToken;
     }
-
-    /**
-     * Rotate refresh token (safe default):
-     * - token must exist and be valid
-     * - revoke all tokens for the user
-     * - issue a new one
-     */
+    
     public record RotationResult(UUID userId, String newRefreshToken) {}
 
     @Transactional
