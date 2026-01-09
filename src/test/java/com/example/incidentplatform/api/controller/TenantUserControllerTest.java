@@ -84,4 +84,21 @@ class TenantUserControllerTest {
 
         verify(createTenantUserUseCase).isUserMember(tenantId, userId);
     }
+
+    @Test
+    @DisplayName("GET /api/public/tenants/{tenantId}/users lists members")
+    void listMembers_returnsOk_with_json() throws Exception {
+        UUID tenantId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+
+        var member = com.example.incidentplatform.domain.model.TenantUser.createNew(tenantId, userId, RoleCode.MEMBER);
+        when(createTenantUserUseCase.listMembers(tenantId)).thenReturn(java.util.List.of(member));
+
+        mockMvc.perform(get("/api/public/tenants/{tenantId}/users", tenantId))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString(userId.toString())))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString(RoleCode.MEMBER.name())));
+
+        verify(createTenantUserUseCase).listMembers(tenantId);
+    }
 }

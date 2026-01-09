@@ -2,6 +2,7 @@ package com.example.incidentplatform.application.usecase;
 
 import com.example.incidentplatform.application.service.TenantUserService;
 import com.example.incidentplatform.domain.model.RoleCode;
+import com.example.incidentplatform.domain.model.TenantUser;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -15,7 +16,6 @@ public class CreateTenantUserUseCase {
         this.tenantUserService = tenantUserService;
     }
 
-
     public void execute(UUID tenantId, UUID userId, RoleCode roleCode) {
         tenantUserService.addUserToTenant(tenantId, userId, roleCode);
     }
@@ -26,5 +26,13 @@ public class CreateTenantUserUseCase {
 
     public boolean isUserMember(UUID tenantId, UUID userId) {
         return tenantUserService.isUserMember(tenantId, userId);
+    }
+
+    public java.util.List<TenantUser> listMembers(UUID tenantId) {
+        return tenantUserService.listMembers(tenantId);
+    }
+
+    public java.util.List<TenantUser> listUserMemberships(UUID userId) {
+        return tenantUserService.listUserMemberships(userId);
     }
 }
