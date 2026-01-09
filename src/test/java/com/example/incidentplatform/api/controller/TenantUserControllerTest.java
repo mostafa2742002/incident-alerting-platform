@@ -50,7 +50,8 @@ class TenantUserControllerTest {
                 .param("roleCode", RoleCode.MEMBER.name())
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().isOk())
-                .andExpect(content().string("User added to tenant"));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString(userId.toString())))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString(RoleCode.MEMBER.name())));
 
         verify(createTenantUserUseCase).execute(tenantId, userId, RoleCode.MEMBER);
     }
@@ -64,7 +65,8 @@ class TenantUserControllerTest {
         mockMvc.perform(delete("/api/public/tenants/{tenantId}/users", tenantId)
                 .param("userId", userId.toString()))
                 .andExpect(status().isOk())
-                .andExpect(content().string("User removed from tenant"));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("removed")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("true")));
 
         verify(createTenantUserUseCase).removeUserFromTenant(tenantId, userId);
     }
@@ -80,7 +82,8 @@ class TenantUserControllerTest {
         mockMvc.perform(get("/api/public/tenants/{tenantId}/users/check", tenantId)
                 .param("userId", userId.toString()))
                 .andExpect(status().isOk())
-                .andExpect(content().string("true"));
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("member")))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("true")));
 
         verify(createTenantUserUseCase).isUserMember(tenantId, userId);
     }
@@ -100,5 +103,21 @@ class TenantUserControllerTest {
                 .andExpect(content().string(org.hamcrest.Matchers.containsString(RoleCode.MEMBER.name())));
 
         verify(createTenantUserUseCase).listMembers(tenantId);
+    }
+
+    @Test
+    @DisplayName("GET /api/public/tenants/{tenantId}/users/{userId} returns membership")
+    void getMembership_returnsOk() throws Exception {
+        UUID tenantId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        var member = com.example.incidentplatform.domain.model.TenantUser.createNew(tenantId, userId, RoleCode.ADMIN);
+        when(createTenantUserUseCase.getMembership(tenantId, userId)).thenReturn(member);
+
+        mockMvc.perform(get("/api/public/tenants/{tenantId}/users/{userId}", tenantId, userId))
+                .andExpect(status().isOk())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString(userId.toString())))
+                .andExpect(content().string(org.hamcrest.Matchers.containsString(RoleCode.ADMIN.name())));
+
+        verify(createTenantUserUseCase).getMembership(tenantId, userId);
     }
 }

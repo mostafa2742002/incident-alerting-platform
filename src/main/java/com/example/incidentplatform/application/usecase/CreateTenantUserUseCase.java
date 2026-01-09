@@ -35,4 +35,8 @@ public class CreateTenantUserUseCase {
     public java.util.List<TenantUser> listUserMemberships(UUID userId) {
         return tenantUserService.listUserMemberships(userId);
     }
+
+    public TenantUser getMembership(UUID tenantId, UUID userId) {
+        return tenantUserService.getMembership(tenantId, userId);
+    }
 }

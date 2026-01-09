@@ -43,4 +43,9 @@ public class TenantUserService {
     public java.util.List<TenantUser> listUserMemberships(UUID userId) {
         return tenantUserRepository.findByUserId(userId);
     }
+
+    public TenantUser getMembership(UUID tenantId, UUID userId) {
+        return tenantUserRepository.findByTenantIdAndUserId(tenantId, userId)
+                .orElseThrow(() -> new NotFoundException("Membership not found"));
+    }
 }

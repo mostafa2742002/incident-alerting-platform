@@ -2,8 +2,12 @@ package com.example.incidentplatform.api.controller;
 
 import com.example.incidentplatform.application.usecase.CreateTenantUserUseCase;
 import com.example.incidentplatform.api.dto.TenantUserResponse;
+import com.example.incidentplatform.api.dto.AddMembershipResponse;
+import com.example.incidentplatform.api.dto.RemoveMembershipResponse;
+import com.example.incidentplatform.api.dto.MembershipCheckResponse;
 import com.example.incidentplatform.domain.model.RoleCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -21,34 +25,34 @@ public class TenantUserController {
     }
 
     @PostMapping
-    public ResponseEntity<String> addUserToTenant(
+    @PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
+    public ResponseEntity<AddMembershipResponse> addUserToTenant(
             @PathVariable UUID tenantId,
             @RequestParam UUID userId,
             @RequestParam RoleCode roleCode) {
 
         createTenantUserUseCase.execute(tenantId, userId, roleCode);
-
-        return ResponseEntity.ok("User added to tenant");
+        var res = new AddMembershipResponse(null, tenantId, userId, roleCode, java.time.Instant.now());
+        return ResponseEntity.ok(res);
     }
 
     @DeleteMapping
-    public ResponseEntity<String> removeUserFromTenant(
+    @PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
+    public ResponseEntity<RemoveMembershipResponse> removeUserFromTenant(
             @PathVariable UUID tenantId,
             @RequestParam UUID userId) {
 
         createTenantUserUseCase.removeUserFromTenant(tenantId, userId);
-
-        return ResponseEntity.ok("User removed from tenant");
+        return ResponseEntity.ok(new RemoveMembershipResponse(true));
     }
 
     @GetMapping("/check")
-    public ResponseEntity<Boolean> isUserMember(
+    public ResponseEntity<MembershipCheckResponse> isUserMember(
             @PathVariable UUID tenantId,
             @RequestParam UUID userId) {
 
         boolean isMember = createTenantUserUseCase.isUserMember(tenantId, userId);
-
-        return ResponseEntity.ok(isMember);
+        return ResponseEntity.ok(new MembershipCheckResponse(isMember));
     }
 
     @GetMapping
@@ -58,5 +62,13 @@ public class TenantUserController {
                 .map(m -> new TenantUserResponse(m.id(), m.tenantId(), m.userId(), m.roleCode(), m.createdAt()))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(members);
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<TenantUserResponse> getMembership(
+            @PathVariable UUID tenantId,
+            @PathVariable UUID userId) {
+        var m = createTenantUserUseCase.getMembership(tenantId, userId);
+        return ResponseEntity.ok(new TenantUserResponse(m.id(), m.tenantId(), m.userId(), m.roleCode(), m.createdAt()));
     }
 }
