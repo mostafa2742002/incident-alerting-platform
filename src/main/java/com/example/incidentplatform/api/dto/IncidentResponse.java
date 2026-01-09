@@ -5,9 +5,7 @@ import com.example.incidentplatform.domain.model.IncidentStatus;
 import java.time.Instant;
 import java.util.UUID;
 
-/**
- * Response DTO for an incident.
- */
+
 public record IncidentResponse(
         UUID id,
         UUID tenantId,

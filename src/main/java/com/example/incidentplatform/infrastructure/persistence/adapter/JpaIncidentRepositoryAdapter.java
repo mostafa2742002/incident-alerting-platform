@@ -11,9 +11,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-/**
- * Adapter implementing the IncidentRepository port using Spring Data JPA.
- */
 @Component
 public class JpaIncidentRepositoryAdapter implements IncidentRepository {
 

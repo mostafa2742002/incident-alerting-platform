@@ -8,9 +8,6 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
-/**
- * Mapper between TenantUser domain model and TenantUserEntity.
- */
 public final class TenantUserMapper {
 
     private TenantUserMapper() {

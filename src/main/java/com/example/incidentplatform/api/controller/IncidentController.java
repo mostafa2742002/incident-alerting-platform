@@ -12,10 +12,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-/**
- * REST controller for incident management.
- * Endpoints for creating, retrieving, and listing incidents within a tenant.
- */
+
 @RestController
 @RequestMapping("/api/public/tenants/{tenantId}/incidents")
 public class IncidentController {
@@ -29,9 +26,7 @@ public class IncidentController {
         this.securityContextHelper = securityContextHelper;
     }
 
-    /**
-     * Create a new incident.
-     */
+
     @PostMapping
     public ResponseEntity<IncidentResponse> createIncident(
             @PathVariable UUID tenantId,
@@ -51,9 +46,7 @@ public class IncidentController {
         return ResponseEntity.status(201).body(toResponse(incident));
     }
 
-    /**
-     * Get an incident by ID.
-     */
+
     @GetMapping("/{incidentId}")
     public ResponseEntity<IncidentResponse> getIncident(
             @PathVariable UUID tenantId,
@@ -63,9 +56,6 @@ public class IncidentController {
         return ResponseEntity.ok(toResponse(incident));
     }
 
-    /**
-     * List all incidents for a tenant.
-     */
     @GetMapping
     public ResponseEntity<List<IncidentResponse>> listIncidents(@PathVariable UUID tenantId) {
         var incidents = manageIncidentUseCase.listIncidents(tenantId).stream()
@@ -74,9 +64,7 @@ public class IncidentController {
         return ResponseEntity.ok(incidents);
     }
 
-    /**
-     * List incidents by status.
-     */
+ 
     @GetMapping("/status/{status}")
     public ResponseEntity<List<IncidentResponse>> listIncidentsByStatus(
             @PathVariable UUID tenantId,
@@ -89,9 +77,7 @@ public class IncidentController {
         return ResponseEntity.ok(incidents);
     }
 
-    /**
-     * Delete an incident.
-     */
+
     @DeleteMapping("/{incidentId}")
     public ResponseEntity<Void> deleteIncident(
             @PathVariable UUID tenantId,

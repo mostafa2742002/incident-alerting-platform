@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-/**
- * JPA adapter implementation for TenantUserRepository port.
- */
+
 @Repository
 public class JpaTenantUserRepositoryAdapter implements TenantUserRepository {
 

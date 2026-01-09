@@ -1,9 +1,5 @@
 package com.example.incidentplatform.domain.model;
 
-/**
- * Severity levels for incidents.
- * Ordered from most to least critical.
- */
 public enum Severity {
     CRITICAL(1),
     HIGH(2),

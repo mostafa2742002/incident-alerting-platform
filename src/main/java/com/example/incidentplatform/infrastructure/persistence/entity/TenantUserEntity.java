@@ -5,9 +5,7 @@ import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-/**
- * JPA Entity for tenant_users table (tenant membership).
- */
+
 @Entity
 @Table(name = "tenant_users")
 public class TenantUserEntity {

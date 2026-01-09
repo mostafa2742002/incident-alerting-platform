@@ -7,9 +7,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.Instant;
 import java.util.UUID;
 
-/**
- * JPA entity for the incidents table.
- */
 @Entity
 @Table(name = "incidents")
 public class IncidentEntity {

@@ -6,15 +6,10 @@ import com.example.incidentplatform.domain.model.IncidentStatus;
 import com.example.incidentplatform.infrastructure.persistence.entity.IncidentEntity;
 import org.springframework.stereotype.Component;
 
-/**
- * Maps between Incident domain model and IncidentEntity JPA entity.
- */
+
 @Component
 public class IncidentMapper {
 
-    /**
-     * Convert domain model to JPA entity for persistence.
-     */
     public IncidentEntity toEntity(Incident incident) {
         return new IncidentEntity(
                 incident.id(),
@@ -29,9 +24,6 @@ public class IncidentMapper {
                 incident.resolvedAt());
     }
 
-    /**
-     * Convert JPA entity to domain model.
-     */
     public Incident toDomain(IncidentEntity entity) {
         return Incident.of(
                 entity.getId(),

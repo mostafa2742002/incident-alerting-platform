@@ -4,11 +4,6 @@ import java.time.Instant;
 import java.util.UUID;
 import java.util.Objects;
 
-/**
- * Domain model for an Incident.
- * Represents an issue or event that needs to be tracked and resolved within a
- * tenant.
- */
 public class Incident {
     private final UUID id;
     private final UUID tenantId;
@@ -44,9 +39,6 @@ public class Incident {
         this.resolvedAt = resolvedAt;
     }
 
-    /**
-     * Factory method to create a new incident.
-     */
     public static Incident createNew(
             UUID tenantId,
             String title,
@@ -67,9 +59,6 @@ public class Incident {
                 null);
     }
 
-    /**
-     * Reconstruct incident from persistence (for repository use).
-     */
     public static Incident of(
             UUID id,
             UUID tenantId,
