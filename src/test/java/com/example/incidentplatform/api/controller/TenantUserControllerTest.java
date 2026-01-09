@@ -2,6 +2,7 @@ package com.example.incidentplatform.api.controller;
 
 import com.example.incidentplatform.application.usecase.CreateTenantUserUseCase;
 import com.example.incidentplatform.domain.model.RoleCode;
+import com.example.incidentplatform.api.dto.AddMembershipRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.UUID;
 
@@ -27,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TenantUserControllerTest {
 
     private MockMvc mockMvc;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Mock
     private CreateTenantUserUseCase createTenantUserUseCase;
@@ -44,11 +47,11 @@ class TenantUserControllerTest {
     void addUserToTenant_returnsOk() throws Exception {
         UUID tenantId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
+        var request = new AddMembershipRequest(userId, RoleCode.MEMBER);
 
         mockMvc.perform(post("/api/public/tenants/{tenantId}/users", tenantId)
-                .param("userId", userId.toString())
-                .param("roleCode", RoleCode.MEMBER.name())
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString(userId.toString())))
                 .andExpect(content().string(org.hamcrest.Matchers.containsString(RoleCode.MEMBER.name())));
