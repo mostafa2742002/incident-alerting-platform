@@ -28,11 +28,6 @@ public enum Severity {
         return this.level > other.level;
     }
 
-    /**
-     * Escalate to next higher severity level.
-     * LOW → MEDIUM → HIGH → CRITICAL
-     * Returns CRITICAL if already at maximum.
-     */
     public Severity escalate() {
         return switch (this) {
             case LOW -> MEDIUM;
@@ -42,11 +37,6 @@ public enum Severity {
         };
     }
 
-    /**
-     * De-escalate to next lower severity level.
-     * CRITICAL → HIGH → MEDIUM → LOW
-     * Returns LOW if already at minimum.
-     */
     public Severity deescalate() {
         return switch (this) {
             case CRITICAL -> HIGH;

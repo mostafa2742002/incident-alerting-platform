@@ -131,11 +131,6 @@ public class Incident {
     // These methods return NEW Incident instances (immutability pattern)
     // This ensures domain objects are predictable and thread-safe
 
-    /**
-     * Update the incident with new values.
-     * Null values mean "keep current value" (partial update support).
-     * Automatically sets resolvedAt when status changes to RESOLVED.
-     */
     public Incident update(String newTitle, String newDescription, Severity newSeverity, IncidentStatus newStatus) {
         Instant now = Instant.now();
         IncidentStatus finalStatus = newStatus != null ? newStatus : this.status;
@@ -159,24 +154,14 @@ public class Incident {
                 finalResolvedAt);
     }
 
-    /**
-     * Convenience method to change only the status.
-     */
     public Incident withStatus(IncidentStatus newStatus) {
         return update(null, null, null, newStatus);
     }
 
-    /**
-     * Convenience method to change only the severity.
-     */
     public Incident withSeverity(Severity newSeverity) {
         return update(null, null, newSeverity, null);
     }
 
-    /**
-     * Escalate incident - increase severity by one level.
-     * Returns same incident if already CRITICAL.
-     */
     public Incident escalate() {
         Severity escalated = this.severity.escalate();
         if (escalated == this.severity) {
