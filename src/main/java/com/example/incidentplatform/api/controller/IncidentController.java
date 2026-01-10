@@ -84,36 +84,21 @@ public class IncidentController {
         return ResponseEntity.noContent().build();
     }
 
-    /**
-     * PATCH /api/public/tenants/{tenantId}/incidents/{incidentId}
-     * 
-     * Update an incident. All fields are optional - only provided fields are
-     * updated.
-     * 
-     * Examples:
-     * - Change status: {"status": "IN_PROGRESS"}
-     * - Escalate: {"severity": "CRITICAL"}
-     * - Multiple: {"status": "RESOLVED", "description": "Fixed by deploying hotfix
-     * v2.3.1"}
-     */
     @PatchMapping("/{incidentId}")
     public ResponseEntity<IncidentResponse> updateIncident(
             @PathVariable UUID tenantId,
             @PathVariable UUID incidentId,
             @RequestBody UpdateIncidentRequest request) {
 
-        // Validate that at least one field is provided
         if (!request.hasUpdates()) {
             return ResponseEntity.badRequest().build();
         }
 
-        // Parse severity if provided
         Severity severity = null;
         if (request.severity() != null) {
             severity = Severity.valueOf(request.severity().toUpperCase());
         }
 
-        // Parse status if provided
         IncidentStatus status = null;
         if (request.status() != null) {
             status = IncidentStatus.valueOf(request.status().toUpperCase());
@@ -130,12 +115,6 @@ public class IncidentController {
         return ResponseEntity.ok(toResponse(incident));
     }
 
-    /**
-     * POST /api/public/tenants/{tenantId}/incidents/{incidentId}/escalate
-     * 
-     * Quick action to escalate an incident's severity by one level.
-     * LOW → MEDIUM → HIGH → CRITICAL
-     */
     @PostMapping("/{incidentId}/escalate")
     public ResponseEntity<IncidentResponse> escalateIncident(
             @PathVariable UUID tenantId,

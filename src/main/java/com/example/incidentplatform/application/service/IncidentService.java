@@ -44,18 +44,6 @@ public class IncidentService {
         incidentRepository.deleteByIdAndTenantId(incidentId, tenantId);
     }
 
-    /**
-     * Update an existing incident with new values.
-     * 
-     * @param tenantId    The tenant that owns the incident
-     * @param incidentId  The incident to update
-     * @param title       New title (null to keep current)
-     * @param description New description (null to keep current)
-     * @param severity    New severity (null to keep current)
-     * @param status      New status (null to keep current)
-     * @return The updated incident
-     * @throws NotFoundException if incident doesn't exist in tenant
-     */
     public Incident updateIncident(
             UUID tenantId,
             UUID incidentId,
@@ -64,27 +52,19 @@ public class IncidentService {
             Severity severity,
             IncidentStatus status) {
 
-        // 1. Find existing incident (validates tenant ownership)
         Incident existing = incidentRepository.findByIdAndTenantId(incidentId, tenantId)
                 .orElseThrow(() -> new NotFoundException("Incident not found: " + incidentId));
 
-        // 2. Apply updates using domain method
         Incident updated = existing.update(title, description, severity, status);
 
-        // 3. Save and return
         return incidentRepository.save(updated);
     }
 
-    /**
-     * Quick status transition (convenience method).
-     */
     public Incident changeStatus(UUID tenantId, UUID incidentId, IncidentStatus newStatus) {
         return updateIncident(tenantId, incidentId, null, null, null, newStatus);
     }
 
-    /**
-     * Escalate incident severity by one level.
-     */
+
     public Incident escalateIncident(UUID tenantId, UUID incidentId) {
         Incident existing = incidentRepository.findByIdAndTenantId(incidentId, tenantId)
                 .orElseThrow(() -> new NotFoundException("Incident not found: " + incidentId));
@@ -93,3 +73,4 @@ public class IncidentService {
         return incidentRepository.save(escalated);
     }
 }
+    

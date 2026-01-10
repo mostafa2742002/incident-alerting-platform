@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
 public interface IncidentRepository {
-
 
     Incident save(Incident incident);
 
@@ -21,4 +19,6 @@ public interface IncidentRepository {
     void deleteByIdAndTenantId(UUID id, UUID tenantId);
 
     boolean existsByIdAndTenantId(UUID id, UUID tenantId);
+
+    boolean existsById(UUID id);
 }
