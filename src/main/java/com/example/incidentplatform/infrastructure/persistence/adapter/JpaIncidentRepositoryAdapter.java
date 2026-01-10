@@ -61,4 +61,9 @@ public class JpaIncidentRepositoryAdapter implements IncidentRepository {
     public boolean existsByIdAndTenantId(UUID id, UUID tenantId) {
         return jpaRepository.existsByIdAndTenantId(id, tenantId);
     }
+
+    @Override
+    public boolean existsById(UUID id) {
+        return jpaRepository.existsById(id);
+    }
 }
