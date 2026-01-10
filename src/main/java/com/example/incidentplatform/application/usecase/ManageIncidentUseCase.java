@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
-
 @Component
 public class ManageIncidentUseCase {
 
@@ -37,5 +36,19 @@ public class ManageIncidentUseCase {
 
     public void deleteIncident(UUID tenantId, UUID incidentId) {
         incidentService.deleteIncident(tenantId, incidentId);
+    }
+
+    public Incident updateIncident(
+            UUID tenantId,
+            UUID incidentId,
+            String title,
+            String description,
+            Severity severity,
+            IncidentStatus status) {
+        return incidentService.updateIncident(tenantId, incidentId, title, description, severity, status);
+    }
+
+    public Incident escalateIncident(UUID tenantId, UUID incidentId) {
+        return incidentService.escalateIncident(tenantId, incidentId);
     }
 }

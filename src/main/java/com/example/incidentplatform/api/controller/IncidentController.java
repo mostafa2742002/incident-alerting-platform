@@ -2,8 +2,10 @@ package com.example.incidentplatform.api.controller;
 
 import com.example.incidentplatform.application.usecase.ManageIncidentUseCase;
 import com.example.incidentplatform.api.dto.CreateIncidentRequest;
+import com.example.incidentplatform.api.dto.UpdateIncidentRequest;
 import com.example.incidentplatform.api.dto.IncidentResponse;
 import com.example.incidentplatform.domain.model.IncidentStatus;
+import com.example.incidentplatform.domain.model.Severity;
 import com.example.incidentplatform.infrastructure.security.SecurityContextHelper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 
 @RestController
 @RequestMapping("/api/public/tenants/{tenantId}/incidents")
@@ -25,7 +26,6 @@ public class IncidentController {
         this.manageIncidentUseCase = manageIncidentUseCase;
         this.securityContextHelper = securityContextHelper;
     }
-
 
     @PostMapping
     public ResponseEntity<IncidentResponse> createIncident(
@@ -46,7 +46,6 @@ public class IncidentController {
         return ResponseEntity.status(201).body(toResponse(incident));
     }
 
-
     @GetMapping("/{incidentId}")
     public ResponseEntity<IncidentResponse> getIncident(
             @PathVariable UUID tenantId,
@@ -64,7 +63,6 @@ public class IncidentController {
         return ResponseEntity.ok(incidents);
     }
 
- 
     @GetMapping("/status/{status}")
     public ResponseEntity<List<IncidentResponse>> listIncidentsByStatus(
             @PathVariable UUID tenantId,
@@ -77,7 +75,6 @@ public class IncidentController {
         return ResponseEntity.ok(incidents);
     }
 
-
     @DeleteMapping("/{incidentId}")
     public ResponseEntity<Void> deleteIncident(
             @PathVariable UUID tenantId,
@@ -85,6 +82,67 @@ public class IncidentController {
 
         manageIncidentUseCase.deleteIncident(tenantId, incidentId);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * PATCH /api/public/tenants/{tenantId}/incidents/{incidentId}
+     * 
+     * Update an incident. All fields are optional - only provided fields are
+     * updated.
+     * 
+     * Examples:
+     * - Change status: {"status": "IN_PROGRESS"}
+     * - Escalate: {"severity": "CRITICAL"}
+     * - Multiple: {"status": "RESOLVED", "description": "Fixed by deploying hotfix
+     * v2.3.1"}
+     */
+    @PatchMapping("/{incidentId}")
+    public ResponseEntity<IncidentResponse> updateIncident(
+            @PathVariable UUID tenantId,
+            @PathVariable UUID incidentId,
+            @RequestBody UpdateIncidentRequest request) {
+
+        // Validate that at least one field is provided
+        if (!request.hasUpdates()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        // Parse severity if provided
+        Severity severity = null;
+        if (request.severity() != null) {
+            severity = Severity.valueOf(request.severity().toUpperCase());
+        }
+
+        // Parse status if provided
+        IncidentStatus status = null;
+        if (request.status() != null) {
+            status = IncidentStatus.valueOf(request.status().toUpperCase());
+        }
+
+        var incident = manageIncidentUseCase.updateIncident(
+                tenantId,
+                incidentId,
+                request.title(),
+                request.description(),
+                severity,
+                status);
+
+        return ResponseEntity.ok(toResponse(incident));
+    }
+
+    /**
+     * POST /api/public/tenants/{tenantId}/incidents/{incidentId}/escalate
+     * 
+     * Quick action to escalate an incident's severity by one level.
+     * LOW → MEDIUM → HIGH → CRITICAL
+     */
+    @PostMapping("/{incidentId}/escalate")
+    public ResponseEntity<IncidentResponse> escalateIncident(
+            @PathVariable UUID tenantId,
+            @PathVariable UUID incidentId) {
+
+        var incident = manageIncidentUseCase.escalateIncident(tenantId, incidentId);
+        return ResponseEntity.ok(toResponse(incident));
     }
 
     // Helper method to convert domain model to response DTO

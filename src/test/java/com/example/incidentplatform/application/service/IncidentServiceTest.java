@@ -123,4 +123,113 @@ class IncidentServiceTest {
 
         verify(incidentRepository, never()).deleteByIdAndTenantId(any(), any());
     }
+
+    // ==================== Update Incident Tests ====================
+
+    @Test
+    @DisplayName("updateIncident changes status from OPEN to IN_PROGRESS")
+    void updateIncident_changesStatus() {
+        UUID tenantId = UUID.randomUUID();
+        UUID incidentId = UUID.randomUUID();
+        var existing = Incident.createNew(tenantId, "Issue", "Desc", Severity.HIGH, UUID.randomUUID());
+
+        when(incidentRepository.findByIdAndTenantId(incidentId, tenantId))
+                .thenReturn(Optional.of(existing));
+        when(incidentRepository.save(any(Incident.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        var result = incidentService.updateIncident(
+                tenantId, incidentId, null, null, null, IncidentStatus.IN_PROGRESS);
+
+        assertEquals(IncidentStatus.IN_PROGRESS, result.status());
+        assertEquals(existing.title(), result.title()); // unchanged
+        verify(incidentRepository).save(any(Incident.class));
+    }
+
+    @Test
+    @DisplayName("updateIncident changes multiple fields at once")
+    void updateIncident_changesMultipleFields() {
+        UUID tenantId = UUID.randomUUID();
+        UUID incidentId = UUID.randomUUID();
+        var existing = Incident.createNew(tenantId, "Old Title", "Old Desc", Severity.LOW, UUID.randomUUID());
+
+        when(incidentRepository.findByIdAndTenantId(incidentId, tenantId))
+                .thenReturn(Optional.of(existing));
+        when(incidentRepository.save(any(Incident.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        var result = incidentService.updateIncident(
+                tenantId, incidentId, "New Title", "New Description", Severity.CRITICAL, IncidentStatus.IN_PROGRESS);
+
+        assertEquals("New Title", result.title());
+        assertEquals("New Description", result.description());
+        assertEquals(Severity.CRITICAL, result.severity());
+        assertEquals(IncidentStatus.IN_PROGRESS, result.status());
+    }
+
+    @Test
+    @DisplayName("updateIncident sets resolvedAt when status changes to RESOLVED")
+    void updateIncident_setsResolvedAt_whenResolved() {
+        UUID tenantId = UUID.randomUUID();
+        UUID incidentId = UUID.randomUUID();
+        var existing = Incident.createNew(tenantId, "Issue", "Desc", Severity.HIGH, UUID.randomUUID());
+
+        when(incidentRepository.findByIdAndTenantId(incidentId, tenantId))
+                .thenReturn(Optional.of(existing));
+        when(incidentRepository.save(any(Incident.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        var result = incidentService.updateIncident(
+                tenantId, incidentId, null, null, null, IncidentStatus.RESOLVED);
+
+        assertEquals(IncidentStatus.RESOLVED, result.status());
+        assertNotNull(result.resolvedAt()); // resolvedAt should be set!
+    }
+
+    @Test
+    @DisplayName("updateIncident throws NotFoundException when incident not found")
+    void updateIncident_throwsNotFoundException() {
+        UUID tenantId = UUID.randomUUID();
+        UUID incidentId = UUID.randomUUID();
+
+        when(incidentRepository.findByIdAndTenantId(incidentId, tenantId))
+                .thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class,
+                () -> incidentService.updateIncident(tenantId, incidentId, "New Title", null, null, null));
+    }
+
+    @Test
+    @DisplayName("escalateIncident increases severity by one level")
+    void escalateIncident_increasesSeverity() {
+        UUID tenantId = UUID.randomUUID();
+        UUID incidentId = UUID.randomUUID();
+        var existing = Incident.createNew(tenantId, "Issue", "Desc", Severity.MEDIUM, UUID.randomUUID());
+
+        when(incidentRepository.findByIdAndTenantId(incidentId, tenantId))
+                .thenReturn(Optional.of(existing));
+        when(incidentRepository.save(any(Incident.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        var result = incidentService.escalateIncident(tenantId, incidentId);
+
+        assertEquals(Severity.HIGH, result.severity()); // MEDIUM → HIGH
+    }
+
+    @Test
+    @DisplayName("escalateIncident keeps CRITICAL severity when already at max")
+    void escalateIncident_keepsMaxSeverity() {
+        UUID tenantId = UUID.randomUUID();
+        UUID incidentId = UUID.randomUUID();
+        var existing = Incident.createNew(tenantId, "Issue", "Desc", Severity.CRITICAL, UUID.randomUUID());
+
+        when(incidentRepository.findByIdAndTenantId(incidentId, tenantId))
+                .thenReturn(Optional.of(existing));
+        when(incidentRepository.save(any(Incident.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        var result = incidentService.escalateIncident(tenantId, incidentId);
+
+        assertEquals(Severity.CRITICAL, result.severity()); // stays CRITICAL
+    }
 }

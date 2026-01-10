@@ -2,6 +2,7 @@ package com.example.incidentplatform.api.controller;
 
 import com.example.incidentplatform.application.usecase.ManageIncidentUseCase;
 import com.example.incidentplatform.api.dto.CreateIncidentRequest;
+import com.example.incidentplatform.api.dto.UpdateIncidentRequest;
 import com.example.incidentplatform.api.dto.IncidentResponse;
 import com.example.incidentplatform.domain.model.Incident;
 import com.example.incidentplatform.domain.model.Severity;
@@ -31,115 +32,221 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class IncidentControllerTest {
 
-    private MockMvc mockMvc;
-    private ObjectMapper objectMapper = new ObjectMapper();
+        private MockMvc mockMvc;
+        private ObjectMapper objectMapper = new ObjectMapper();
 
-    @Mock
-    private ManageIncidentUseCase manageIncidentUseCase;
+        @Mock
+        private ManageIncidentUseCase manageIncidentUseCase;
 
-    @Mock
-    private SecurityContextHelper securityContextHelper;
+        @Mock
+        private SecurityContextHelper securityContextHelper;
 
-    @InjectMocks
-    private IncidentController incidentController;
+        @InjectMocks
+        private IncidentController incidentController;
 
-    @BeforeEach
-    void setup() {
-        mockMvc = MockMvcBuilders.standaloneSetup(incidentController).build();
-    }
+        @BeforeEach
+        void setup() {
+                mockMvc = MockMvcBuilders.standaloneSetup(incidentController).build();
+        }
 
-    @Test
-    @DisplayName("POST /api/public/tenants/{tenantId}/incidents creates new incident")
-    void createIncident_returnsCreatedStatus() throws Exception {
-        UUID tenantId = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
-        var request = new CreateIncidentRequest("Database Failed", "Connection pool exhausted", Severity.CRITICAL);
+        @Test
+        @DisplayName("POST /api/public/tenants/{tenantId}/incidents creates new incident")
+        void createIncident_returnsCreatedStatus() throws Exception {
+                UUID tenantId = UUID.randomUUID();
+                UUID userId = UUID.randomUUID();
+                var request = new CreateIncidentRequest("Database Failed", "Connection pool exhausted",
+                                Severity.CRITICAL);
 
-        var incident = Incident.createNew(tenantId, request.title(), request.description(), request.severity(), userId);
+                var incident = Incident.createNew(tenantId, request.title(), request.description(), request.severity(),
+                                userId);
 
-        when(securityContextHelper.getCurrentUserId()).thenReturn(Optional.of(userId));
-        when(manageIncidentUseCase.createIncident(tenantId, request.title(), request.description(), request.severity(),
-                userId))
-                .thenReturn(incident);
+                when(securityContextHelper.getCurrentUserId()).thenReturn(Optional.of(userId));
+                when(manageIncidentUseCase.createIncident(tenantId, request.title(), request.description(),
+                                request.severity(),
+                                userId))
+                                .thenReturn(incident);
 
-        mockMvc.perform(post("/api/public/tenants/{tenantId}/incidents", tenantId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString(request.title())))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString(Severity.CRITICAL.name())));
+                mockMvc.perform(post("/api/public/tenants/{tenantId}/incidents", tenantId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request)))
+                                .andExpect(status().isCreated())
+                                .andExpect(content().string(org.hamcrest.Matchers.containsString(request.title())))
+                                .andExpect(content().string(
+                                                org.hamcrest.Matchers.containsString(Severity.CRITICAL.name())));
 
-        verify(manageIncidentUseCase).createIncident(tenantId, request.title(), request.description(),
-                request.severity(), userId);
-    }
+                verify(manageIncidentUseCase).createIncident(tenantId, request.title(), request.description(),
+                                request.severity(), userId);
+        }
 
-    @Test
-    @DisplayName("GET /api/public/tenants/{tenantId}/incidents/{incidentId} retrieves incident")
-    void getIncident_returnsIncident() throws Exception {
-        UUID tenantId = UUID.randomUUID();
-        UUID incidentId = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
+        @Test
+        @DisplayName("GET /api/public/tenants/{tenantId}/incidents/{incidentId} retrieves incident")
+        void getIncident_returnsIncident() throws Exception {
+                UUID tenantId = UUID.randomUUID();
+                UUID incidentId = UUID.randomUUID();
+                UUID userId = UUID.randomUUID();
 
-        var incident = Incident.createNew(tenantId, "Issue", "Description", Severity.HIGH, userId);
+                var incident = Incident.createNew(tenantId, "Issue", "Description", Severity.HIGH, userId);
 
-        when(manageIncidentUseCase.getIncident(tenantId, incidentId))
-                .thenReturn(incident);
+                when(manageIncidentUseCase.getIncident(tenantId, incidentId))
+                                .thenReturn(incident);
 
-        mockMvc.perform(get("/api/public/tenants/{tenantId}/incidents/{incidentId}", tenantId, incidentId))
-                .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Issue")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString(Severity.HIGH.name())));
+                mockMvc.perform(get("/api/public/tenants/{tenantId}/incidents/{incidentId}", tenantId, incidentId))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string(org.hamcrest.Matchers.containsString("Issue")))
+                                .andExpect(content()
+                                                .string(org.hamcrest.Matchers.containsString(Severity.HIGH.name())));
 
-        verify(manageIncidentUseCase).getIncident(tenantId, incidentId);
-    }
+                verify(manageIncidentUseCase).getIncident(tenantId, incidentId);
+        }
 
-    @Test
-    @DisplayName("GET /api/public/tenants/{tenantId}/incidents lists all incidents")
-    void listIncidents_returnsIncidentList() throws Exception {
-        UUID tenantId = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
+        @Test
+        @DisplayName("GET /api/public/tenants/{tenantId}/incidents lists all incidents")
+        void listIncidents_returnsIncidentList() throws Exception {
+                UUID tenantId = UUID.randomUUID();
+                UUID userId = UUID.randomUUID();
 
-        var incident1 = Incident.createNew(tenantId, "Issue 1", "Desc", Severity.HIGH, userId);
-        var incident2 = Incident.createNew(tenantId, "Issue 2", "Desc", Severity.LOW, userId);
+                var incident1 = Incident.createNew(tenantId, "Issue 1", "Desc", Severity.HIGH, userId);
+                var incident2 = Incident.createNew(tenantId, "Issue 2", "Desc", Severity.LOW, userId);
 
-        when(manageIncidentUseCase.listIncidents(tenantId))
-                .thenReturn(List.of(incident1, incident2));
+                when(manageIncidentUseCase.listIncidents(tenantId))
+                                .thenReturn(List.of(incident1, incident2));
 
-        mockMvc.perform(get("/api/public/tenants/{tenantId}/incidents", tenantId))
-                .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Issue 1")))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Issue 2")));
+                mockMvc.perform(get("/api/public/tenants/{tenantId}/incidents", tenantId))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string(org.hamcrest.Matchers.containsString("Issue 1")))
+                                .andExpect(content().string(org.hamcrest.Matchers.containsString("Issue 2")));
 
-        verify(manageIncidentUseCase).listIncidents(tenantId);
-    }
+                verify(manageIncidentUseCase).listIncidents(tenantId);
+        }
 
-    @Test
-    @DisplayName("GET /api/public/tenants/{tenantId}/incidents/status/{status} filters by status")
-    void listIncidentsByStatus_returnsFilteredList() throws Exception {
-        UUID tenantId = UUID.randomUUID();
-        UUID userId = UUID.randomUUID();
+        @Test
+        @DisplayName("GET /api/public/tenants/{tenantId}/incidents/status/{status} filters by status")
+        void listIncidentsByStatus_returnsFilteredList() throws Exception {
+                UUID tenantId = UUID.randomUUID();
+                UUID userId = UUID.randomUUID();
 
-        var incident = Incident.createNew(tenantId, "Open Issue", "Desc", Severity.MEDIUM, userId);
+                var incident = Incident.createNew(tenantId, "Open Issue", "Desc", Severity.MEDIUM, userId);
 
-        when(manageIncidentUseCase.listIncidentsByStatus(tenantId, IncidentStatus.OPEN))
-                .thenReturn(List.of(incident));
+                when(manageIncidentUseCase.listIncidentsByStatus(tenantId, IncidentStatus.OPEN))
+                                .thenReturn(List.of(incident));
 
-        mockMvc.perform(get("/api/public/tenants/{tenantId}/incidents/status/{status}", tenantId, "OPEN"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Open Issue")));
+                mockMvc.perform(get("/api/public/tenants/{tenantId}/incidents/status/{status}", tenantId, "OPEN"))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string(org.hamcrest.Matchers.containsString("Open Issue")));
 
-        verify(manageIncidentUseCase).listIncidentsByStatus(tenantId, IncidentStatus.OPEN);
-    }
+                verify(manageIncidentUseCase).listIncidentsByStatus(tenantId, IncidentStatus.OPEN);
+        }
 
-    @Test
-    @DisplayName("DELETE /api/public/tenants/{tenantId}/incidents/{incidentId} deletes incident")
-    void deleteIncident_returnsNoContent() throws Exception {
-        UUID tenantId = UUID.randomUUID();
-        UUID incidentId = UUID.randomUUID();
+        @Test
+        @DisplayName("DELETE /api/public/tenants/{tenantId}/incidents/{incidentId} deletes incident")
+        void deleteIncident_returnsNoContent() throws Exception {
+                UUID tenantId = UUID.randomUUID();
+                UUID incidentId = UUID.randomUUID();
 
-        mockMvc.perform(delete("/api/public/tenants/{tenantId}/incidents/{incidentId}", tenantId, incidentId))
-                .andExpect(status().isNoContent());
+                mockMvc.perform(delete("/api/public/tenants/{tenantId}/incidents/{incidentId}", tenantId, incidentId))
+                                .andExpect(status().isNoContent());
 
-        verify(manageIncidentUseCase).deleteIncident(tenantId, incidentId);
-    }
+                verify(manageIncidentUseCase).deleteIncident(tenantId, incidentId);
+        }
+
+        // ==================== Update Incident Tests ====================
+
+        @Test
+        @DisplayName("PATCH /api/public/tenants/{tenantId}/incidents/{incidentId} updates status")
+        void updateIncident_updatesStatus() throws Exception {
+                UUID tenantId = UUID.randomUUID();
+                UUID incidentId = UUID.randomUUID();
+                UUID userId = UUID.randomUUID();
+
+                var updateRequest = new UpdateIncidentRequest(null, null, null, "IN_PROGRESS");
+
+                // Create an updated incident (simulating status change)
+                var updated = Incident.of(
+                                incidentId, tenantId, "Issue", "Desc",
+                                Severity.HIGH, IncidentStatus.IN_PROGRESS,
+                                userId, java.time.Instant.now(), java.time.Instant.now(), null);
+
+                when(manageIncidentUseCase.updateIncident(
+                                eq(tenantId), eq(incidentId), isNull(), isNull(), isNull(),
+                                eq(IncidentStatus.IN_PROGRESS)))
+                                .thenReturn(updated);
+
+                mockMvc.perform(patch("/api/public/tenants/{tenantId}/incidents/{incidentId}", tenantId, incidentId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(updateRequest)))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string(org.hamcrest.Matchers.containsString("IN_PROGRESS")));
+
+                verify(manageIncidentUseCase).updateIncident(
+                                eq(tenantId), eq(incidentId), isNull(), isNull(), isNull(),
+                                eq(IncidentStatus.IN_PROGRESS));
+        }
+
+        @Test
+        @DisplayName("PATCH with multiple fields updates all provided fields")
+        void updateIncident_updatesMultipleFields() throws Exception {
+                UUID tenantId = UUID.randomUUID();
+                UUID incidentId = UUID.randomUUID();
+                UUID userId = UUID.randomUUID();
+
+                var updateRequest = new UpdateIncidentRequest("New Title", "New Description", "CRITICAL", "RESOLVED");
+
+                var updated = Incident.of(
+                                incidentId, tenantId, "New Title", "New Description",
+                                Severity.CRITICAL, IncidentStatus.RESOLVED,
+                                userId, java.time.Instant.now(), java.time.Instant.now(), java.time.Instant.now());
+
+                when(manageIncidentUseCase.updateIncident(
+                                eq(tenantId), eq(incidentId), eq("New Title"), eq("New Description"),
+                                eq(Severity.CRITICAL), eq(IncidentStatus.RESOLVED)))
+                                .thenReturn(updated);
+
+                mockMvc.perform(patch("/api/public/tenants/{tenantId}/incidents/{incidentId}", tenantId, incidentId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(updateRequest)))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string(org.hamcrest.Matchers.containsString("New Title")))
+                                .andExpect(content().string(org.hamcrest.Matchers.containsString("CRITICAL")));
+        }
+
+        @Test
+        @DisplayName("PATCH with empty body returns bad request")
+        void updateIncident_emptyBody_returnsBadRequest() throws Exception {
+                UUID tenantId = UUID.randomUUID();
+                UUID incidentId = UUID.randomUUID();
+
+                // All fields null = no updates
+                var emptyRequest = new UpdateIncidentRequest(null, null, null, null);
+
+                mockMvc.perform(patch("/api/public/tenants/{tenantId}/incidents/{incidentId}", tenantId, incidentId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(emptyRequest)))
+                                .andExpect(status().isBadRequest());
+
+                verify(manageIncidentUseCase, never()).updateIncident(any(), any(), any(), any(), any(), any());
+        }
+
+        @Test
+        @DisplayName("POST /api/public/tenants/{tenantId}/incidents/{incidentId}/escalate escalates severity")
+        void escalateIncident_increasesSeverity() throws Exception {
+                UUID tenantId = UUID.randomUUID();
+                UUID incidentId = UUID.randomUUID();
+                UUID userId = UUID.randomUUID();
+
+                // MEDIUM → HIGH after escalation
+                var escalated = Incident.of(
+                                incidentId, tenantId, "Issue", "Desc",
+                                Severity.HIGH, IncidentStatus.OPEN,
+                                userId, java.time.Instant.now(), java.time.Instant.now(), null);
+
+                when(manageIncidentUseCase.escalateIncident(tenantId, incidentId))
+                                .thenReturn(escalated);
+
+                mockMvc.perform(post("/api/public/tenants/{tenantId}/incidents/{incidentId}/escalate", tenantId,
+                                incidentId))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string(org.hamcrest.Matchers.containsString("HIGH")));
+
+                verify(manageIncidentUseCase).escalateIncident(tenantId, incidentId);
+        }
 }
