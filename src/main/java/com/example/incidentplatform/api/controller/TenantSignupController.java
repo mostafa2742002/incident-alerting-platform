@@ -5,7 +5,8 @@ import com.example.incidentplatform.api.dto.TenantResponse;
 import com.example.incidentplatform.application.usecase.CreateTenantUseCase;
 import com.example.incidentplatform.application.usecase.GetTenantUseCase;
 import com.example.incidentplatform.application.usecase.ListTenantsUseCase;
-import com.example.incidentplatform.domain.model.Tenant;
+import com.example.incidentplatform.domain.model.tenant.Tenant;
+
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

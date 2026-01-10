@@ -3,7 +3,7 @@ package com.example.incidentplatform.application.usecase;
 import com.example.incidentplatform.application.service.TenantAuthorizationService;
 import com.example.incidentplatform.application.service.TenantUserService;
 import com.example.incidentplatform.common.error.ForbiddenException;
-import com.example.incidentplatform.domain.model.RoleCode;
+import com.example.incidentplatform.domain.model.user.RoleCode;
 import com.example.incidentplatform.infrastructure.security.SecurityContextHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

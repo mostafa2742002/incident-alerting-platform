@@ -11,7 +11,7 @@ import com.example.incidentplatform.application.service.RefreshTokenService;
 import com.example.incidentplatform.application.usecase.LoginUseCase;
 import com.example.incidentplatform.application.usecase.RefreshAuthUseCase;
 import com.example.incidentplatform.application.usecase.RegisterUserUseCase;
-import com.example.incidentplatform.domain.model.User;
+import com.example.incidentplatform.domain.model.user.User;
 import com.example.incidentplatform.infrastructure.security.JwtTokenService;
 
 import jakarta.validation.Valid;

@@ -1,8 +1,9 @@
 package com.example.incidentplatform.api.controller;
 
 import com.example.incidentplatform.application.usecase.CreateTenantUserUseCase;
-import com.example.incidentplatform.domain.model.RoleCode;
-import com.example.incidentplatform.domain.model.TenantUser;
+import com.example.incidentplatform.domain.model.tenant.TenantUser;
+import com.example.incidentplatform.domain.model.user.RoleCode;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

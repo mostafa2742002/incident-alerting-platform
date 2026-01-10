@@ -1,12 +1,13 @@
 package com.example.incidentplatform.api.controller;
 
 import com.example.incidentplatform.application.usecase.CreateTenantUserUseCase;
+import com.example.incidentplatform.domain.model.user.RoleCode;
 import com.example.incidentplatform.api.dto.TenantUserResponse;
 import com.example.incidentplatform.api.dto.AddMembershipRequest;
 import com.example.incidentplatform.api.dto.AddMembershipResponse;
 import com.example.incidentplatform.api.dto.RemoveMembershipResponse;
 import com.example.incidentplatform.api.dto.MembershipCheckResponse;
-import com.example.incidentplatform.domain.model.RoleCode;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

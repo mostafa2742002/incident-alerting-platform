@@ -1,7 +1,7 @@
 package com.example.incidentplatform.infrastructure.persistence.adapter;
 
 import com.example.incidentplatform.application.port.IncidentAssignmentRepository;
-import com.example.incidentplatform.domain.model.IncidentAssignment;
+import com.example.incidentplatform.domain.model.incident.IncidentAssignment;
 import com.example.incidentplatform.infrastructure.persistence.mapper.IncidentAssignmentMapper;
 import com.example.incidentplatform.infrastructure.persistence.repository.IncidentAssignmentJpaRepository;
 import org.springframework.stereotype.Component;

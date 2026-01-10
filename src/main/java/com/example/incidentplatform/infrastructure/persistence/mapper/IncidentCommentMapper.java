@@ -1,6 +1,6 @@
 package com.example.incidentplatform.infrastructure.persistence.mapper;
 
-import com.example.incidentplatform.domain.model.IncidentComment;
+import com.example.incidentplatform.domain.model.incident.IncidentComment;
 import com.example.incidentplatform.infrastructure.persistence.entity.IncidentCommentEntity;
 import org.springframework.stereotype.Component;
 

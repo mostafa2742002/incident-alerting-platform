@@ -3,7 +3,8 @@ package com.example.incidentplatform.application.usecase;
 import com.example.incidentplatform.application.port.PasswordHasher;
 import com.example.incidentplatform.application.port.UserRepository;
 import com.example.incidentplatform.common.error.UnauthorizedException;
-import com.example.incidentplatform.domain.model.User;
+import com.example.incidentplatform.domain.model.user.User;
+
 import org.springframework.stereotype.Component;
 
 @Component

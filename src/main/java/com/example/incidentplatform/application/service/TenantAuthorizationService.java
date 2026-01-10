@@ -1,7 +1,8 @@
 package com.example.incidentplatform.application.service;
 
 import com.example.incidentplatform.application.port.TenantUserRepository;
-import com.example.incidentplatform.domain.model.RoleCode;
+import com.example.incidentplatform.domain.model.user.RoleCode;
+
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

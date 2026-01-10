@@ -1,7 +1,7 @@
 package com.example.incidentplatform.api.controller;
 
 import com.example.incidentplatform.application.usecase.CreateTenantUserUseCase;
-import com.example.incidentplatform.domain.model.RoleCode;
+import com.example.incidentplatform.domain.model.user.RoleCode;
 import com.example.incidentplatform.api.dto.AddMembershipRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -97,7 +97,7 @@ class TenantUserControllerTest {
         UUID tenantId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
 
-        var member = com.example.incidentplatform.domain.model.TenantUser.createNew(tenantId, userId, RoleCode.MEMBER);
+        var member = com.example.incidentplatform.domain.model.tenant.TenantUser.createNew(tenantId, userId, RoleCode.MEMBER);
         when(createTenantUserUseCase.listMembers(tenantId)).thenReturn(java.util.List.of(member));
 
         mockMvc.perform(get("/api/public/tenants/{tenantId}/users", tenantId))
@@ -113,7 +113,7 @@ class TenantUserControllerTest {
     void getMembership_returnsOk() throws Exception {
         UUID tenantId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
-        var member = com.example.incidentplatform.domain.model.TenantUser.createNew(tenantId, userId, RoleCode.ADMIN);
+        var member = com.example.incidentplatform.domain.model.tenant.TenantUser.createNew(tenantId, userId, RoleCode.ADMIN);
         when(createTenantUserUseCase.getMembership(tenantId, userId)).thenReturn(member);
 
         mockMvc.perform(get("/api/public/tenants/{tenantId}/users/{userId}", tenantId, userId))

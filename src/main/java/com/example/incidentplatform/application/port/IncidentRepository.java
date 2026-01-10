@@ -1,10 +1,10 @@
 package com.example.incidentplatform.application.port;
 
-import com.example.incidentplatform.domain.model.Incident;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import com.example.incidentplatform.domain.model.incident.Incident;
 
 public interface IncidentRepository {
 

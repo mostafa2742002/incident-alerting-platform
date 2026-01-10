@@ -1,7 +1,7 @@
 package com.example.incidentplatform.api.dto;
 
-import com.example.incidentplatform.domain.model.Notification;
-import com.example.incidentplatform.domain.model.NotificationType;
+import com.example.incidentplatform.domain.model.notification.Notification;
+import com.example.incidentplatform.domain.model.notification.NotificationType;
 
 import java.time.Instant;
 import java.util.Map;

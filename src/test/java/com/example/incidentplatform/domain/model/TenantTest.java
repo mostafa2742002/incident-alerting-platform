@@ -6,6 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
+import com.example.incidentplatform.domain.model.tenant.Tenant;
+import com.example.incidentplatform.domain.model.tenant.TenantStatus;
+
 public class TenantTest {
 
     @Test

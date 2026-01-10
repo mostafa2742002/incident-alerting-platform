@@ -3,7 +3,8 @@ package com.example.incidentplatform.application.service;
 import com.example.incidentplatform.application.port.IncidentCommentRepository;
 import com.example.incidentplatform.application.port.IncidentRepository;
 import com.example.incidentplatform.common.error.NotFoundException;
-import com.example.incidentplatform.domain.model.IncidentComment;
+import com.example.incidentplatform.domain.model.incident.IncidentComment;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

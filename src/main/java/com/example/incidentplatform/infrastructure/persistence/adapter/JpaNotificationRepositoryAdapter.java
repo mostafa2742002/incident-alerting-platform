@@ -1,8 +1,8 @@
 package com.example.incidentplatform.infrastructure.persistence.adapter;
 
 import com.example.incidentplatform.application.port.NotificationRepository;
-import com.example.incidentplatform.domain.model.Notification;
-import com.example.incidentplatform.domain.model.NotificationType;
+import com.example.incidentplatform.domain.model.notification.Notification;
+import com.example.incidentplatform.domain.model.notification.NotificationType;
 import com.example.incidentplatform.infrastructure.persistence.mapper.NotificationMapper;
 import com.example.incidentplatform.infrastructure.persistence.repository.NotificationJpaRepository;
 import org.springframework.data.domain.Page;

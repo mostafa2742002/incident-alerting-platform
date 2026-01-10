@@ -2,8 +2,9 @@ package com.example.incidentplatform.application.service;
 
 import com.example.incidentplatform.application.port.NotificationRepository;
 import com.example.incidentplatform.common.error.NotFoundException;
-import com.example.incidentplatform.domain.model.Notification;
-import com.example.incidentplatform.domain.model.NotificationType;
+import com.example.incidentplatform.domain.model.notification.Notification;
+import com.example.incidentplatform.domain.model.notification.NotificationType;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

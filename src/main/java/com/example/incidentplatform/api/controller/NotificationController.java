@@ -3,8 +3,9 @@ package com.example.incidentplatform.api.controller;
 import com.example.incidentplatform.api.dto.NotificationResponse;
 import com.example.incidentplatform.api.dto.UnreadCountResponse;
 import com.example.incidentplatform.application.service.NotificationService;
-import com.example.incidentplatform.domain.model.Notification;
-import com.example.incidentplatform.domain.model.NotificationType;
+import com.example.incidentplatform.domain.model.notification.Notification;
+import com.example.incidentplatform.domain.model.notification.NotificationType;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

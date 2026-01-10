@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import com.example.incidentplatform.application.port.PasswordHasher;
 import com.example.incidentplatform.application.port.UserRepository;
 import com.example.incidentplatform.common.error.ConflictException;
-import com.example.incidentplatform.domain.model.User;
+import com.example.incidentplatform.domain.model.user.User;
 
 @Component
 public class RegisterUserUseCase {

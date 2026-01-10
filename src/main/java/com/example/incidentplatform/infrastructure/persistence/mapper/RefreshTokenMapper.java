@@ -1,6 +1,6 @@
 package com.example.incidentplatform.infrastructure.persistence.mapper;
 
-import com.example.incidentplatform.domain.model.RefreshToken;
+import com.example.incidentplatform.domain.model.refresh.RefreshToken;
 import com.example.incidentplatform.infrastructure.persistence.entity.RefreshTokenEntity;
 
 import java.time.Instant;

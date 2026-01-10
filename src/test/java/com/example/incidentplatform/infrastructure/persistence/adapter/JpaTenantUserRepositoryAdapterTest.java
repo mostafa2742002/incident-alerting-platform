@@ -1,8 +1,8 @@
 package com.example.incidentplatform.infrastructure.persistence.adapter;
 
 import com.example.incidentplatform.application.port.TenantUserRepository;
-import com.example.incidentplatform.domain.model.RoleCode;
-import com.example.incidentplatform.domain.model.TenantUser;
+import com.example.incidentplatform.domain.model.tenant.TenantUser;
+import com.example.incidentplatform.domain.model.user.RoleCode;
 import com.example.incidentplatform.infrastructure.persistence.entity.TenantEntity;
 import com.example.incidentplatform.infrastructure.persistence.entity.UserEntity;
 import com.example.incidentplatform.infrastructure.persistence.repository.TenantJpaRepository;

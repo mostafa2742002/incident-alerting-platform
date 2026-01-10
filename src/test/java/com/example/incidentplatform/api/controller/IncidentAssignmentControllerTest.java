@@ -6,7 +6,7 @@ import com.example.incidentplatform.application.service.IncidentAssignmentServic
 import com.example.incidentplatform.common.error.ConflictException;
 import com.example.incidentplatform.common.error.GlobalExceptionHandler;
 import com.example.incidentplatform.common.error.NotFoundException;
-import com.example.incidentplatform.domain.model.IncidentAssignment;
+import com.example.incidentplatform.domain.model.incident.IncidentAssignment;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -2,9 +2,10 @@ package com.example.incidentplatform.application.service;
 
 import com.example.incidentplatform.application.port.IncidentRepository;
 import com.example.incidentplatform.common.error.NotFoundException;
-import com.example.incidentplatform.domain.model.Incident;
-import com.example.incidentplatform.domain.model.Severity;
-import com.example.incidentplatform.domain.model.IncidentStatus;
+import com.example.incidentplatform.domain.model.incident.Incident;
+import com.example.incidentplatform.domain.model.incident.IncidentStatus;
+import com.example.incidentplatform.domain.model.incident.Severity;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -4,8 +4,8 @@ import com.example.incidentplatform.application.usecase.ManageIncidentUseCase;
 import com.example.incidentplatform.api.dto.CreateIncidentRequest;
 import com.example.incidentplatform.api.dto.UpdateIncidentRequest;
 import com.example.incidentplatform.api.dto.IncidentResponse;
-import com.example.incidentplatform.domain.model.IncidentStatus;
-import com.example.incidentplatform.domain.model.Severity;
+import com.example.incidentplatform.domain.model.incident.IncidentStatus;
+import com.example.incidentplatform.domain.model.incident.Severity;
 import com.example.incidentplatform.infrastructure.security.SecurityContextHelper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -125,7 +125,7 @@ public class IncidentController {
     }
 
     // Helper method to convert domain model to response DTO
-    private IncidentResponse toResponse(com.example.incidentplatform.domain.model.Incident incident) {
+    private IncidentResponse toResponse(com.example.incidentplatform.domain.model.incident.Incident incident) {
         return new IncidentResponse(
                 incident.id(),
                 incident.tenantId(),

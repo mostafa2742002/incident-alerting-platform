@@ -1,9 +1,9 @@
 package com.example.incidentplatform.api.dto;
 
-import com.example.incidentplatform.domain.model.IncidentComment;
-
 import java.time.Instant;
 import java.util.UUID;
+
+import com.example.incidentplatform.domain.model.incident.IncidentComment;
 
 
 public record CommentResponse(

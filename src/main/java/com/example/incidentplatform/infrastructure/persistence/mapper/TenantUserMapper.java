@@ -1,7 +1,7 @@
 package com.example.incidentplatform.infrastructure.persistence.mapper;
 
-import com.example.incidentplatform.domain.model.RoleCode;
-import com.example.incidentplatform.domain.model.TenantUser;
+import com.example.incidentplatform.domain.model.tenant.TenantUser;
+import com.example.incidentplatform.domain.model.user.RoleCode;
 import com.example.incidentplatform.infrastructure.persistence.entity.TenantUserEntity;
 
 import java.time.Instant;

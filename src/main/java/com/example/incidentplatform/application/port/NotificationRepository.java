@@ -1,7 +1,8 @@
 package com.example.incidentplatform.application.port;
 
-import com.example.incidentplatform.domain.model.Notification;
-import com.example.incidentplatform.domain.model.NotificationType;
+import com.example.incidentplatform.domain.model.notification.Notification;
+import com.example.incidentplatform.domain.model.notification.NotificationType;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

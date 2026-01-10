@@ -2,7 +2,8 @@ package com.example.incidentplatform.application.service;
 
 import com.example.incidentplatform.application.port.RefreshTokenRepository;
 import com.example.incidentplatform.common.error.UnauthorizedException;
-import com.example.incidentplatform.domain.model.RefreshToken;
+import com.example.incidentplatform.domain.model.refresh.RefreshToken;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

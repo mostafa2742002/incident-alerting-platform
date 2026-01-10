@@ -1,4 +1,4 @@
-package com.example.incidentplatform.domain.model;
+package com.example.incidentplatform.domain.model.tenant;
 
 import java.time.Instant;
 import java.util.Objects;

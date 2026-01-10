@@ -1,7 +1,7 @@
 package com.example.incidentplatform.infrastructure.persistence.adapter;
 
 import com.example.incidentplatform.application.port.TenantRepository;
-import com.example.incidentplatform.domain.model.Tenant;
+import com.example.incidentplatform.domain.model.tenant.Tenant;
 import com.example.incidentplatform.infrastructure.persistence.mapper.TenantMapper;
 import com.example.incidentplatform.infrastructure.persistence.repository.TenantJpaRepository;
 import org.springframework.stereotype.Repository;

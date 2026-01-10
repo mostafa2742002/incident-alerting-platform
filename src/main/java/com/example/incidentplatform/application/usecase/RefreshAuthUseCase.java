@@ -3,7 +3,7 @@ package com.example.incidentplatform.application.usecase;
 import com.example.incidentplatform.application.port.UserRepository;
 import com.example.incidentplatform.application.service.RefreshTokenService;
 import com.example.incidentplatform.common.error.UnauthorizedException;
-import com.example.incidentplatform.domain.model.User;
+import com.example.incidentplatform.domain.model.user.User;
 import com.example.incidentplatform.infrastructure.security.JwtTokenService;
 import org.springframework.stereotype.Component;
 

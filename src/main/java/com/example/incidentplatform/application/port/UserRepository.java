@@ -1,9 +1,9 @@
 package com.example.incidentplatform.application.port;
 
-import com.example.incidentplatform.domain.model.User;
-
 import java.util.Optional;
 import java.util.UUID;
+
+import com.example.incidentplatform.domain.model.user.User;
 
 public interface UserRepository {
 

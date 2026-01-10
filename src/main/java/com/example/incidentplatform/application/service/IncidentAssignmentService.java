@@ -4,7 +4,8 @@ import com.example.incidentplatform.application.port.IncidentAssignmentRepositor
 import com.example.incidentplatform.application.port.IncidentRepository;
 import com.example.incidentplatform.common.error.ConflictException;
 import com.example.incidentplatform.common.error.NotFoundException;
-import com.example.incidentplatform.domain.model.IncidentAssignment;
+import com.example.incidentplatform.domain.model.incident.IncidentAssignment;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

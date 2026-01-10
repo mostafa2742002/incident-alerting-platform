@@ -1,10 +1,11 @@
 package com.example.incidentplatform.infrastructure.security;
 
-import com.example.incidentplatform.domain.model.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.example.incidentplatform.domain.model.user.User;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;

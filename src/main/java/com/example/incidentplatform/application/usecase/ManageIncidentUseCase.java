@@ -1,9 +1,10 @@
 package com.example.incidentplatform.application.usecase;
 
 import com.example.incidentplatform.application.service.IncidentService;
-import com.example.incidentplatform.domain.model.Incident;
-import com.example.incidentplatform.domain.model.Severity;
-import com.example.incidentplatform.domain.model.IncidentStatus;
+import com.example.incidentplatform.domain.model.incident.Incident;
+import com.example.incidentplatform.domain.model.incident.IncidentStatus;
+import com.example.incidentplatform.domain.model.incident.Severity;
+
 import org.springframework.stereotype.Component;
 
 import java.util.List;

@@ -1,8 +1,8 @@
 package com.example.incidentplatform.infrastructure.persistence.mapper;
 
-import com.example.incidentplatform.domain.model.Incident;
-import com.example.incidentplatform.domain.model.Severity;
-import com.example.incidentplatform.domain.model.IncidentStatus;
+import com.example.incidentplatform.domain.model.incident.Incident;
+import com.example.incidentplatform.domain.model.incident.IncidentStatus;
+import com.example.incidentplatform.domain.model.incident.Severity;
 import com.example.incidentplatform.infrastructure.persistence.entity.IncidentEntity;
 import org.springframework.stereotype.Component;
 

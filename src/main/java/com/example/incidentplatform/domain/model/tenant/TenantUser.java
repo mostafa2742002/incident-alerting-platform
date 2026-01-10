@@ -1,8 +1,10 @@
-package com.example.incidentplatform.domain.model;
+package com.example.incidentplatform.domain.model.tenant;
 
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
+
+import com.example.incidentplatform.domain.model.user.RoleCode;
 
 public record TenantUser(
         UUID id,

@@ -4,7 +4,8 @@ import com.example.incidentplatform.api.dto.AssignUserRequest;
 import com.example.incidentplatform.api.dto.AssignmentResponse;
 import com.example.incidentplatform.api.dto.UpdateAssignmentNotesRequest;
 import com.example.incidentplatform.application.service.IncidentAssignmentService;
-import com.example.incidentplatform.domain.model.IncidentAssignment;
+import com.example.incidentplatform.domain.model.incident.IncidentAssignment;
+
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

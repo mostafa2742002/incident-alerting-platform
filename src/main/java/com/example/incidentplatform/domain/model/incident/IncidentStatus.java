@@ -1,4 +1,4 @@
-package com.example.incidentplatform.domain.model;
+package com.example.incidentplatform.domain.model.incident;
 
 public enum IncidentStatus {
     OPEN, // Newly created, not yet being worked on

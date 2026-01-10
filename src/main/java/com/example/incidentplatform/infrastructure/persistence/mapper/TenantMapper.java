@@ -1,7 +1,7 @@
 package com.example.incidentplatform.infrastructure.persistence.mapper;
 
-import com.example.incidentplatform.domain.model.Tenant;
-import com.example.incidentplatform.domain.model.TenantStatus;
+import com.example.incidentplatform.domain.model.tenant.Tenant;
+import com.example.incidentplatform.domain.model.tenant.TenantStatus;
 import com.example.incidentplatform.infrastructure.persistence.entity.TenantEntity;
 
 public final class TenantMapper {

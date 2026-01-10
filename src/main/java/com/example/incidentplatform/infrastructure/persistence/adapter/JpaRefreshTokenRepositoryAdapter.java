@@ -1,7 +1,7 @@
 package com.example.incidentplatform.infrastructure.persistence.adapter;
 
 import com.example.incidentplatform.application.port.RefreshTokenRepository;
-import com.example.incidentplatform.domain.model.RefreshToken;
+import com.example.incidentplatform.domain.model.refresh.RefreshToken;
 import com.example.incidentplatform.infrastructure.persistence.mapper.RefreshTokenMapper;
 import com.example.incidentplatform.infrastructure.persistence.repository.RefreshTokenJpaRepository;
 

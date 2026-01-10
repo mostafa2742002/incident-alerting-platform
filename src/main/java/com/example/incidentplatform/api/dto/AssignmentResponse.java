@@ -1,9 +1,9 @@
 package com.example.incidentplatform.api.dto;
 
-import com.example.incidentplatform.domain.model.IncidentAssignment;
-
 import java.time.Instant;
 import java.util.UUID;
+
+import com.example.incidentplatform.domain.model.incident.IncidentAssignment;
 
 
 public record AssignmentResponse(

@@ -1,7 +1,7 @@
 package com.example.incidentplatform.infrastructure.persistence.mapper;
 
-import com.example.incidentplatform.domain.model.Notification;
-import com.example.incidentplatform.domain.model.NotificationType;
+import com.example.incidentplatform.domain.model.notification.Notification;
+import com.example.incidentplatform.domain.model.notification.NotificationType;
 import com.example.incidentplatform.infrastructure.persistence.entity.NotificationEntity;
 import org.springframework.stereotype.Component;
 

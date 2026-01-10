@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.incidentplatform.application.port.TenantRepository;
 import com.example.incidentplatform.common.error.ConflictException;
-import com.example.incidentplatform.domain.model.Tenant;
+import com.example.incidentplatform.domain.model.tenant.Tenant;
 
 @Service
 public class CreateTenantUseCase {

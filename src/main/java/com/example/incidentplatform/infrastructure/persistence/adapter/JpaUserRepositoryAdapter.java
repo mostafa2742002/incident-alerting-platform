@@ -1,7 +1,7 @@
 package com.example.incidentplatform.infrastructure.persistence.adapter;
 
 import com.example.incidentplatform.application.port.UserRepository;
-import com.example.incidentplatform.domain.model.User;
+import com.example.incidentplatform.domain.model.user.User;
 import com.example.incidentplatform.infrastructure.persistence.entity.UserEntity;
 import com.example.incidentplatform.infrastructure.persistence.mapper.UserMapper;
 import com.example.incidentplatform.infrastructure.persistence.repository.UserJpaRepository;

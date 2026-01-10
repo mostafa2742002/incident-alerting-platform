@@ -1,7 +1,7 @@
 package com.example.incidentplatform.infrastructure.persistence.mapper;
 
-import com.example.incidentplatform.domain.model.User;
-import com.example.incidentplatform.domain.model.UserStatus;
+import com.example.incidentplatform.domain.model.user.User;
+import com.example.incidentplatform.domain.model.user.UserStatus;
 import com.example.incidentplatform.infrastructure.persistence.entity.UserEntity;
 
 import java.time.OffsetDateTime;

@@ -1,7 +1,8 @@
 package com.example.incidentplatform.api.dto;
 
-import com.example.incidentplatform.domain.model.Severity;
-import com.example.incidentplatform.domain.model.IncidentStatus;
+import com.example.incidentplatform.domain.model.incident.IncidentStatus;
+import com.example.incidentplatform.domain.model.incident.Severity;
+
 import java.time.Instant;
 import java.util.UUID;
 
