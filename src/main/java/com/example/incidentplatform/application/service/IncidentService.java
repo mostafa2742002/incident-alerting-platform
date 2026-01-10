@@ -1,6 +1,7 @@
 package com.example.incidentplatform.application.service;
 
 import com.example.incidentplatform.application.port.IncidentRepository;
+import com.example.incidentplatform.api.dto.incident.IncidentSearchCriteria;
 import com.example.incidentplatform.common.error.NotFoundException;
 import com.example.incidentplatform.domain.model.incident.Incident;
 import com.example.incidentplatform.domain.model.incident.IncidentStatus;
@@ -38,6 +39,31 @@ public class IncidentService {
         return incidentRepository.findByTenantIdAndStatus(tenantId, status.name());
     }
 
+    public List<Incident> listIncidentsBySeverity(UUID tenantId, Severity severity) {
+        return incidentRepository.findByTenantIdAndSeverity(tenantId, severity.name());
+    }
+
+    public List<Incident> searchIncidents(UUID tenantId, IncidentSearchCriteria criteria) {
+        return incidentRepository.search(
+                tenantId,
+                criteria.searchTerm(),
+                criteria.status() != null ? criteria.status().name() : null,
+                criteria.severity() != null ? criteria.severity().name() : null,
+                criteria.createdAfter(),
+                criteria.createdBefore(),
+                criteria.resolved(),
+                criteria.sortBy(),
+                criteria.sortDirection());
+    }
+
+    public long countIncidents(UUID tenantId) {
+        return incidentRepository.countByTenantId(tenantId);
+    }
+
+    public long countIncidentsByStatus(UUID tenantId, IncidentStatus status) {
+        return incidentRepository.countByTenantIdAndStatus(tenantId, status.name());
+    }
+
     public void deleteIncident(UUID tenantId, UUID incidentId) {
         if (!incidentRepository.existsByIdAndTenantId(incidentId, tenantId)) {
             throw new NotFoundException("Incident not found: " + incidentId);
@@ -65,7 +91,6 @@ public class IncidentService {
         return updateIncident(tenantId, incidentId, null, null, null, newStatus);
     }
 
-
     public Incident escalateIncident(UUID tenantId, UUID incidentId) {
         Incident existing = incidentRepository.findByIdAndTenantId(incidentId, tenantId)
                 .orElseThrow(() -> new NotFoundException("Incident not found: " + incidentId));
@@ -74,4 +99,3 @@ public class IncidentService {
         return incidentRepository.save(escalated);
     }
 }
-    

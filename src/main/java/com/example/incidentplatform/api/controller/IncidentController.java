@@ -3,14 +3,18 @@ package com.example.incidentplatform.api.controller;
 import com.example.incidentplatform.application.usecase.ManageIncidentUseCase;
 import com.example.incidentplatform.api.dto.incident.CreateIncidentRequest;
 import com.example.incidentplatform.api.dto.incident.IncidentResponse;
+import com.example.incidentplatform.api.dto.incident.IncidentSearchCriteria;
 import com.example.incidentplatform.api.dto.incident.UpdateIncidentRequest;
 import com.example.incidentplatform.domain.model.incident.IncidentStatus;
 import com.example.incidentplatform.domain.model.incident.Severity;
 import com.example.incidentplatform.infrastructure.security.SecurityContextHelper;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -63,6 +67,46 @@ public class IncidentController {
         return ResponseEntity.ok(incidents);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<IncidentResponse>> searchIncidents(
+            @PathVariable UUID tenantId,
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String severity,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant createdAfter,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant createdBefore,
+            @RequestParam(required = false) Boolean resolved,
+            @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+            @RequestParam(required = false, defaultValue = "DESC") String sortDirection) {
+
+        IncidentStatus incidentStatus = status != null ? IncidentStatus.valueOf(status.toUpperCase()) : null;
+        Severity incidentSeverity = severity != null ? Severity.valueOf(severity.toUpperCase()) : null;
+
+        IncidentSearchCriteria criteria = new IncidentSearchCriteria(
+                q, incidentStatus, incidentSeverity, createdAfter, createdBefore, resolved, sortBy, sortDirection);
+
+        var incidents = manageIncidentUseCase.searchIncidents(tenantId, criteria).stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(incidents);
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Map<String, Long>> countIncidents(@PathVariable UUID tenantId) {
+        long total = manageIncidentUseCase.countIncidents(tenantId);
+        long open = manageIncidentUseCase.countIncidentsByStatus(tenantId, IncidentStatus.OPEN);
+        long inProgress = manageIncidentUseCase.countIncidentsByStatus(tenantId, IncidentStatus.IN_PROGRESS);
+        long resolved = manageIncidentUseCase.countIncidentsByStatus(tenantId, IncidentStatus.RESOLVED);
+        long closed = manageIncidentUseCase.countIncidentsByStatus(tenantId, IncidentStatus.CLOSED);
+
+        return ResponseEntity.ok(Map.of(
+                "total", total,
+                "open", open,
+                "inProgress", inProgress,
+                "resolved", resolved,
+                "closed", closed));
+    }
+
     @GetMapping("/status/{status}")
     public ResponseEntity<List<IncidentResponse>> listIncidentsByStatus(
             @PathVariable UUID tenantId,
@@ -70,6 +114,18 @@ public class IncidentController {
 
         IncidentStatus incidentStatus = IncidentStatus.valueOf(status.toUpperCase());
         var incidents = manageIncidentUseCase.listIncidentsByStatus(tenantId, incidentStatus).stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(incidents);
+    }
+
+    @GetMapping("/severity/{severity}")
+    public ResponseEntity<List<IncidentResponse>> listIncidentsBySeverity(
+            @PathVariable UUID tenantId,
+            @PathVariable String severity) {
+
+        Severity incidentSeverity = Severity.valueOf(severity.toUpperCase());
+        var incidents = manageIncidentUseCase.listIncidentsBySeverity(tenantId, incidentSeverity).stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(incidents);

@@ -1,6 +1,7 @@
 package com.example.incidentplatform.application.usecase;
 
 import com.example.incidentplatform.application.service.IncidentService;
+import com.example.incidentplatform.api.dto.incident.IncidentSearchCriteria;
 import com.example.incidentplatform.domain.model.incident.Incident;
 import com.example.incidentplatform.domain.model.incident.IncidentStatus;
 import com.example.incidentplatform.domain.model.incident.Severity;
@@ -33,6 +34,22 @@ public class ManageIncidentUseCase {
 
     public List<Incident> listIncidentsByStatus(UUID tenantId, IncidentStatus status) {
         return incidentService.listIncidentsByStatus(tenantId, status);
+    }
+
+    public List<Incident> listIncidentsBySeverity(UUID tenantId, Severity severity) {
+        return incidentService.listIncidentsBySeverity(tenantId, severity);
+    }
+
+    public List<Incident> searchIncidents(UUID tenantId, IncidentSearchCriteria criteria) {
+        return incidentService.searchIncidents(tenantId, criteria);
+    }
+
+    public long countIncidents(UUID tenantId) {
+        return incidentService.countIncidents(tenantId);
+    }
+
+    public long countIncidentsByStatus(UUID tenantId, IncidentStatus status) {
+        return incidentService.countIncidentsByStatus(tenantId, status);
     }
 
     public void deleteIncident(UUID tenantId, UUID incidentId) {

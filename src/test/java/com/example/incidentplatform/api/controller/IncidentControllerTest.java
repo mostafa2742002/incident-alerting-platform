@@ -249,4 +249,84 @@ class IncidentControllerTest {
 
                 verify(manageIncidentUseCase).escalateIncident(tenantId, incidentId);
         }
+
+        // ==================== Search & Filter Tests ====================
+
+        @Test
+        @DisplayName("GET /api/public/tenants/{tenantId}/incidents/search returns filtered results")
+        void searchIncidents_returnsFilteredResults() throws Exception {
+                UUID tenantId = UUID.randomUUID();
+                UUID userId = UUID.randomUUID();
+
+                var incident = Incident.createNew(tenantId, "Server Down", "Database crash", Severity.HIGH, userId);
+
+                when(manageIncidentUseCase.searchIncidents(eq(tenantId), any()))
+                                .thenReturn(List.of(incident));
+
+                mockMvc.perform(get("/api/public/tenants/{tenantId}/incidents/search", tenantId)
+                                .param("q", "server")
+                                .param("status", "OPEN")
+                                .param("severity", "HIGH"))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string(org.hamcrest.Matchers.containsString("Server Down")));
+
+                verify(manageIncidentUseCase).searchIncidents(eq(tenantId), any());
+        }
+
+        @Test
+        @DisplayName("GET /api/public/tenants/{tenantId}/incidents/search with no params returns all")
+        void searchIncidents_withNoParams_returnsAll() throws Exception {
+                UUID tenantId = UUID.randomUUID();
+                UUID userId = UUID.randomUUID();
+
+                var incident1 = Incident.createNew(tenantId, "Issue 1", "Desc", Severity.HIGH, userId);
+                var incident2 = Incident.createNew(tenantId, "Issue 2", "Desc", Severity.LOW, userId);
+
+                when(manageIncidentUseCase.searchIncidents(eq(tenantId), any()))
+                                .thenReturn(List.of(incident1, incident2));
+
+                mockMvc.perform(get("/api/public/tenants/{tenantId}/incidents/search", tenantId))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string(org.hamcrest.Matchers.containsString("Issue 1")))
+                                .andExpect(content().string(org.hamcrest.Matchers.containsString("Issue 2")));
+        }
+
+        @Test
+        @DisplayName("GET /api/public/tenants/{tenantId}/incidents/count returns status counts")
+        void countIncidents_returnsStatusCounts() throws Exception {
+                UUID tenantId = UUID.randomUUID();
+
+                when(manageIncidentUseCase.countIncidents(tenantId)).thenReturn(10L);
+                when(manageIncidentUseCase.countIncidentsByStatus(tenantId, IncidentStatus.OPEN)).thenReturn(5L);
+                when(manageIncidentUseCase.countIncidentsByStatus(tenantId, IncidentStatus.IN_PROGRESS)).thenReturn(3L);
+                when(manageIncidentUseCase.countIncidentsByStatus(tenantId, IncidentStatus.RESOLVED)).thenReturn(1L);
+                when(manageIncidentUseCase.countIncidentsByStatus(tenantId, IncidentStatus.CLOSED)).thenReturn(1L);
+
+                mockMvc.perform(get("/api/public/tenants/{tenantId}/incidents/count", tenantId))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.total").value(10))
+                                .andExpect(jsonPath("$.open").value(5))
+                                .andExpect(jsonPath("$.inProgress").value(3))
+                                .andExpect(jsonPath("$.resolved").value(1))
+                                .andExpect(jsonPath("$.closed").value(1));
+        }
+
+        @Test
+        @DisplayName("GET /api/public/tenants/{tenantId}/incidents/severity/{severity} filters by severity")
+        void listIncidentsBySeverity_returnsFilteredList() throws Exception {
+                UUID tenantId = UUID.randomUUID();
+                UUID userId = UUID.randomUUID();
+
+                var incident = Incident.createNew(tenantId, "Critical Issue", "Desc", Severity.CRITICAL, userId);
+
+                when(manageIncidentUseCase.listIncidentsBySeverity(tenantId, Severity.CRITICAL))
+                                .thenReturn(List.of(incident));
+
+                mockMvc.perform(get("/api/public/tenants/{tenantId}/incidents/severity/{severity}", tenantId,
+                                "CRITICAL"))
+                                .andExpect(status().isOk())
+                                .andExpect(content().string(org.hamcrest.Matchers.containsString("Critical Issue")));
+
+                verify(manageIncidentUseCase).listIncidentsBySeverity(tenantId, Severity.CRITICAL);
+        }
 }

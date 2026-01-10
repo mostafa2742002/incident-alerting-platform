@@ -6,6 +6,7 @@ import com.example.incidentplatform.infrastructure.persistence.mapper.IncidentMa
 import com.example.incidentplatform.infrastructure.persistence.repository.IncidentJpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -51,6 +52,13 @@ public class JpaIncidentRepositoryAdapter implements IncidentRepository {
     }
 
     @Override
+    public List<Incident> findByTenantIdAndSeverity(UUID tenantId, String severity) {
+        return jpaRepository.findByTenantIdAndSeverity(tenantId, severity).stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void deleteByIdAndTenantId(UUID id, UUID tenantId) {
         if (existsByIdAndTenantId(id, tenantId)) {
             jpaRepository.deleteById(id);
@@ -65,5 +73,33 @@ public class JpaIncidentRepositoryAdapter implements IncidentRepository {
     @Override
     public boolean existsById(UUID id) {
         return jpaRepository.existsById(id);
+    }
+
+    @Override
+    public List<Incident> search(
+            UUID tenantId,
+            String searchTerm,
+            String status,
+            String severity,
+            Instant createdAfter,
+            Instant createdBefore,
+            Boolean resolved,
+            String sortBy,
+            String sortDirection) {
+        return jpaRepository.searchIncidents(
+                tenantId, searchTerm, status, severity, createdAfter, createdBefore, resolved)
+                .stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public long countByTenantId(UUID tenantId) {
+        return jpaRepository.countByTenantId(tenantId);
+    }
+
+    @Override
+    public long countByTenantIdAndStatus(UUID tenantId, String status) {
+        return jpaRepository.countByTenantIdAndStatus(tenantId, status);
     }
 }
