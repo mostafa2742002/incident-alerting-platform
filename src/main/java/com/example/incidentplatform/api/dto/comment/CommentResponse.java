@@ -1,4 +1,4 @@
-package com.example.incidentplatform.api.dto;
+package com.example.incidentplatform.api.dto.comment;
 
 import java.time.Instant;
 import java.util.UUID;

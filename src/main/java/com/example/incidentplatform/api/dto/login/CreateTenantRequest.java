@@ -1,4 +1,4 @@
-package com.example.incidentplatform.api.dto;
+package com.example.incidentplatform.api.dto.login;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

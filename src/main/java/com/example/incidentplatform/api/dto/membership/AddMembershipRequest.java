@@ -1,4 +1,4 @@
-package com.example.incidentplatform.api.dto;
+package com.example.incidentplatform.api.dto.membership;
 
 import java.util.UUID;
 

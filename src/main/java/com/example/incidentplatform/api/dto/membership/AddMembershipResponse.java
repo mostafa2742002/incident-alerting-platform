@@ -1,8 +1,9 @@
-package com.example.incidentplatform.api.dto;
+package com.example.incidentplatform.api.dto.membership;
 
 import java.time.Instant;
 import java.util.UUID;
 
+import com.example.incidentplatform.api.dto.tenant.TenantUserResponse;
 import com.example.incidentplatform.domain.model.user.RoleCode;
 
 public record AddMembershipResponse(

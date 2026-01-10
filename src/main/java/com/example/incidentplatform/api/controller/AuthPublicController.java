@@ -1,12 +1,13 @@
 package com.example.incidentplatform.api.controller;
 
 import org.springframework.security.core.Authentication;
-import com.example.incidentplatform.api.dto.LoginRequest;
-import com.example.incidentplatform.api.dto.LoginTokenResponse;
-import com.example.incidentplatform.api.dto.RefreshRequest;
-import com.example.incidentplatform.api.dto.RefreshResponse;
-import com.example.incidentplatform.api.dto.RegisterUserRequest;
-import com.example.incidentplatform.api.dto.UserResponse;
+
+import com.example.incidentplatform.api.dto.login.LoginRequest;
+import com.example.incidentplatform.api.dto.login.LoginTokenResponse;
+import com.example.incidentplatform.api.dto.login.RegisterUserRequest;
+import com.example.incidentplatform.api.dto.refresh.RefreshRequest;
+import com.example.incidentplatform.api.dto.refresh.RefreshResponse;
+import com.example.incidentplatform.api.dto.user.UserResponse;
 import com.example.incidentplatform.application.service.RefreshTokenService;
 import com.example.incidentplatform.application.usecase.LoginUseCase;
 import com.example.incidentplatform.application.usecase.RefreshAuthUseCase;

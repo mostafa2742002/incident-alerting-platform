@@ -1,8 +1,8 @@
 package com.example.incidentplatform.api.controller;
 
-import com.example.incidentplatform.api.dto.AssignUserRequest;
-import com.example.incidentplatform.api.dto.AssignmentResponse;
-import com.example.incidentplatform.api.dto.UpdateAssignmentNotesRequest;
+import com.example.incidentplatform.api.dto.assign.AssignUserRequest;
+import com.example.incidentplatform.api.dto.assign.AssignmentResponse;
+import com.example.incidentplatform.api.dto.assign.UpdateAssignmentNotesRequest;
 import com.example.incidentplatform.application.service.IncidentAssignmentService;
 import com.example.incidentplatform.domain.model.incident.IncidentAssignment;
 

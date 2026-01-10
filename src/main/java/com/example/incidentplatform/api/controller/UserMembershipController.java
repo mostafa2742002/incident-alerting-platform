@@ -1,6 +1,6 @@
 package com.example.incidentplatform.api.controller;
 
-import com.example.incidentplatform.api.dto.TenantUserResponse;
+import com.example.incidentplatform.api.dto.tenant.TenantUserResponse;
 import com.example.incidentplatform.application.usecase.CreateTenantUserUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

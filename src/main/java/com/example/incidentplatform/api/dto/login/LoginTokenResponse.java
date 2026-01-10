@@ -1,4 +1,4 @@
-package com.example.incidentplatform.api.dto;
+package com.example.incidentplatform.api.dto.login;
 
 public record LoginTokenResponse(
         String accessToken,

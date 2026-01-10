@@ -1,7 +1,7 @@
 package com.example.incidentplatform.api.controller;
 
-import com.example.incidentplatform.api.dto.NotificationResponse;
-import com.example.incidentplatform.api.dto.UnreadCountResponse;
+import com.example.incidentplatform.api.dto.notification.NotificationResponse;
+import com.example.incidentplatform.api.dto.notification.UnreadCountResponse;
 import com.example.incidentplatform.application.service.NotificationService;
 import com.example.incidentplatform.domain.model.notification.Notification;
 import com.example.incidentplatform.domain.model.notification.NotificationType;

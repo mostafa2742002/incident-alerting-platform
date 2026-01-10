@@ -1,4 +1,4 @@
-package com.example.incidentplatform.api.dto;
+package com.example.incidentplatform.api.dto.assign;
 
 import jakarta.validation.constraints.NotNull;
 

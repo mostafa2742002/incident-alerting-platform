@@ -1,4 +1,4 @@
-package com.example.incidentplatform.api.dto;
+package com.example.incidentplatform.api.dto.notification;
 
 import com.example.incidentplatform.domain.model.notification.Notification;
 import com.example.incidentplatform.domain.model.notification.NotificationType;

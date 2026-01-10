@@ -1,9 +1,10 @@
 package com.example.incidentplatform.api;
 
-import com.example.incidentplatform.api.dto.LoginRequest;
-import com.example.incidentplatform.api.dto.LoginTokenResponse;
-import com.example.incidentplatform.api.dto.RefreshRequest;
-import com.example.incidentplatform.api.dto.RefreshResponse;
+import com.example.incidentplatform.api.dto.login.LoginRequest;
+import com.example.incidentplatform.api.dto.login.LoginTokenResponse;
+import com.example.incidentplatform.api.dto.refresh.RefreshRequest;
+import com.example.incidentplatform.api.dto.refresh.RefreshResponse;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

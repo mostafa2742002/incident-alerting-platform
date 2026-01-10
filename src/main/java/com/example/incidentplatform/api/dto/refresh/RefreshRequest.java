@@ -1,4 +1,4 @@
-package com.example.incidentplatform.api.dto;
+package com.example.incidentplatform.api.dto.refresh;
 
 import jakarta.validation.constraints.NotBlank;
 

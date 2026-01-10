@@ -1,7 +1,7 @@
 package com.example.incidentplatform.api.controller;
 
-import com.example.incidentplatform.api.dto.CreateTenantRequest;
-import com.example.incidentplatform.api.dto.TenantResponse;
+import com.example.incidentplatform.api.dto.login.CreateTenantRequest;
+import com.example.incidentplatform.api.dto.tenant.TenantResponse;
 import com.example.incidentplatform.application.usecase.CreateTenantUseCase;
 import com.example.incidentplatform.application.usecase.GetTenantUseCase;
 import com.example.incidentplatform.application.usecase.ListTenantsUseCase;

@@ -1,4 +1,4 @@
-package com.example.incidentplatform.api.dto;
+package com.example.incidentplatform.api.dto.incident;
 
 import com.example.incidentplatform.domain.model.incident.IncidentStatus;
 import com.example.incidentplatform.domain.model.incident.Severity;

@@ -1,4 +1,4 @@
-package com.example.incidentplatform.api.dto;
+package com.example.incidentplatform.api.dto.incident;
 
 public record UpdateIncidentRequest(
         String title, 

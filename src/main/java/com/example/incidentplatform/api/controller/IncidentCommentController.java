@@ -1,8 +1,8 @@
 package com.example.incidentplatform.api.controller;
 
-import com.example.incidentplatform.api.dto.CommentResponse;
-import com.example.incidentplatform.api.dto.CreateCommentRequest;
-import com.example.incidentplatform.api.dto.UpdateCommentRequest;
+import com.example.incidentplatform.api.dto.comment.CommentResponse;
+import com.example.incidentplatform.api.dto.comment.CreateCommentRequest;
+import com.example.incidentplatform.api.dto.comment.UpdateCommentRequest;
 import com.example.incidentplatform.application.service.IncidentCommentService;
 import com.example.incidentplatform.domain.model.incident.IncidentComment;
 
