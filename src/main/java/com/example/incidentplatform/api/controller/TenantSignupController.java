@@ -26,7 +26,8 @@ public class TenantSignupController {
     private final GetTenantUseCase getTenantUseCase;
     private final ListTenantsUseCase listTenantsUseCase;
 
-    public TenantSignupController(CreateTenantUseCase createTenantUseCase, GetTenantUseCase getTenantUseCase, ListTenantsUseCase listTenantsUseCase) {
+    public TenantSignupController(CreateTenantUseCase createTenantUseCase, GetTenantUseCase getTenantUseCase,
+            ListTenantsUseCase listTenantsUseCase) {
         this.createTenantUseCase = createTenantUseCase;
         this.getTenantUseCase = getTenantUseCase;
         this.listTenantsUseCase = listTenantsUseCase;
@@ -34,7 +35,7 @@ public class TenantSignupController {
 
     @PostMapping
     public ResponseEntity<TenantResponse> create(@Valid @RequestBody CreateTenantRequest request) {
-        Tenant tenant = createTenantUseCase.create(request.slug(), request.name());
+        Tenant tenant = createTenantUseCase.create(request.slug(), request.name(), request.ownerId());
         TenantResponse body = new TenantResponse(tenant.id(), tenant.slug(), tenant.name(), tenant.status().name());
 
         var location = ServletUriComponentsBuilder
@@ -52,12 +53,10 @@ public class TenantSignupController {
         return new TenantResponse(tenant.id(), tenant.slug(), tenant.name(), tenant.status().name());
     }
 
-
     @GetMapping
     public Page<TenantResponse> list(@PageableDefault(size = 20) Pageable pageable) {
         return listTenantsUseCase.list(pageable)
-            .map(t -> new TenantResponse(t.id(), t.slug(), t.name(), t.status().name()));
+                .map(t -> new TenantResponse(t.id(), t.slug(), t.name(), t.status().name()));
     }
-
 
 }

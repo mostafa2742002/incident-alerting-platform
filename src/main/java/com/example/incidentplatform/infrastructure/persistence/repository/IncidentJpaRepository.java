@@ -13,38 +13,40 @@ import java.util.UUID;
 
 @Repository
 public interface IncidentJpaRepository
-        extends JpaRepository<IncidentEntity, UUID>, JpaSpecificationExecutor<IncidentEntity> {
+                extends JpaRepository<IncidentEntity, UUID>, JpaSpecificationExecutor<IncidentEntity> {
 
-    List<IncidentEntity> findByTenantId(UUID tenantId);
+        List<IncidentEntity> findByTenantId(UUID tenantId);
 
-    List<IncidentEntity> findByTenantIdAndStatus(UUID tenantId, String status);
+        List<IncidentEntity> findByTenantIdAndStatus(UUID tenantId, String status);
 
-    List<IncidentEntity> findByTenantIdAndCreatedBy(UUID tenantId, UUID createdBy);
+        List<IncidentEntity> findByTenantIdAndCreatedBy(UUID tenantId, UUID createdBy);
 
-    List<IncidentEntity> findByTenantIdAndSeverity(UUID tenantId, String severity);
+        List<IncidentEntity> findByTenantIdAndSeverity(UUID tenantId, String severity);
 
-    boolean existsByIdAndTenantId(UUID id, UUID tenantId);
+        boolean existsByIdAndTenantId(UUID id, UUID tenantId);
 
-    long countByTenantId(UUID tenantId);
+        long countByTenantId(UUID tenantId);
 
-    long countByTenantIdAndStatus(UUID tenantId, String status);
+        long countByTenantIdAndStatus(UUID tenantId, String status);
 
-    @Query("SELECT i FROM IncidentEntity i WHERE i.tenantId = :tenantId " +
-            "AND (:searchTerm IS NULL OR LOWER(i.title) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-            "    OR LOWER(i.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) " +
-            "AND (:status IS NULL OR i.status = :status) " +
-            "AND (:severity IS NULL OR i.severity = :severity) " +
-            "AND (:createdAfter IS NULL OR i.createdAt >= :createdAfter) " +
-            "AND (:createdBefore IS NULL OR i.createdAt <= :createdBefore) " +
-            "AND (:resolved IS NULL OR (:resolved = true AND i.resolvedAt IS NOT NULL) " +
-            "    OR (:resolved = false AND i.resolvedAt IS NULL)) " +
-            "ORDER BY i.createdAt DESC")
-    List<IncidentEntity> searchIncidents(
-            @Param("tenantId") UUID tenantId,
-            @Param("searchTerm") String searchTerm,
-            @Param("status") String status,
-            @Param("severity") String severity,
-            @Param("createdAfter") Instant createdAfter,
-            @Param("createdBefore") Instant createdBefore,
-            @Param("resolved") Boolean resolved);
+        @Query(value = """
+                        SELECT * FROM incidents i WHERE i.tenant_id = :tenantId
+                        AND (:searchTerm IS NULL OR :searchTerm = '' OR LOWER(i.title) LIKE LOWER(CONCAT('%', :searchTerm, '%'))
+                            OR LOWER(i.description) LIKE LOWER(CONCAT('%', :searchTerm, '%')))
+                        AND (CAST(:status AS VARCHAR) IS NULL OR i.status = :status)
+                        AND (CAST(:severity AS VARCHAR) IS NULL OR i.severity = :severity)
+                        AND (CAST(:createdAfter AS TIMESTAMP) IS NULL OR i.created_at >= :createdAfter)
+                        AND (CAST(:createdBefore AS TIMESTAMP) IS NULL OR i.created_at <= :createdBefore)
+                        AND (:resolved IS NULL OR (:resolved = true AND i.resolved_at IS NOT NULL)
+                            OR (:resolved = false AND i.resolved_at IS NULL))
+                        ORDER BY i.created_at DESC
+                        """, nativeQuery = true)
+        List<IncidentEntity> searchIncidents(
+                        @Param("tenantId") UUID tenantId,
+                        @Param("searchTerm") String searchTerm,
+                        @Param("status") String status,
+                        @Param("severity") String severity,
+                        @Param("createdAfter") Instant createdAfter,
+                        @Param("createdBefore") Instant createdBefore,
+                        @Param("resolved") Boolean resolved);
 }

@@ -102,7 +102,9 @@ public class WebhookService {
      * Deliver a webhook notification to a single endpoint.
      */
     private void deliverWebhook(Webhook webhook, WebhookEventType eventType, Map<String, Object> eventData) {
-        Map<String, Object> payload = buildPayload(eventType, eventData);
+        Map<String, Object> payload = isSlackWebhook(webhook.url())
+                ? buildSlackPayload(eventType, eventData)
+                : buildPayload(eventType, eventData);
 
         try {
             String jsonPayload = objectMapper.writeValueAsString(payload);
@@ -170,6 +172,82 @@ public class WebhookService {
     }
 
     /**
+     * Check if the webhook URL is a Slack webhook.
+     */
+    private boolean isSlackWebhook(String url) {
+        return url != null && url.contains("hooks.slack.com");
+    }
+
+    /**
+     * Build a Slack-compatible webhook payload.
+     */
+    private Map<String, Object> buildSlackPayload(WebhookEventType eventType, Map<String, Object> eventData) {
+        Map<String, Object> payload = new LinkedHashMap<>();
+
+        String title = (String) eventData.getOrDefault("title", "Unknown Incident");
+        String severity = (String) eventData.getOrDefault("severity", "UNKNOWN");
+        String status = (String) eventData.getOrDefault("status", "UNKNOWN");
+        String description = (String) eventData.getOrDefault("description", "");
+        String incidentId = (String) eventData.getOrDefault("id", "");
+
+        // Build emoji based on event type and severity
+        String emoji = switch (eventType) {
+            case INCIDENT_CREATED -> "🚨";
+            case INCIDENT_RESOLVED -> "✅";
+            case INCIDENT_UPDATED -> "🔄";
+            case INCIDENT_CLOSED -> "🔒";
+            case INCIDENT_ASSIGNED -> "👤";
+            case INCIDENT_UNASSIGNED -> "👤";
+            case INCIDENT_ESCALATED -> "⚠️";
+            case COMMENT_ADDED -> "💬";
+        };
+
+        String severityEmoji = switch (severity.toUpperCase()) {
+            case "CRITICAL" -> "🔴";
+            case "HIGH" -> "🟠";
+            case "MEDIUM" -> "🟡";
+            case "LOW" -> "🟢";
+            default -> "⚪";
+        };
+
+        // Build formatted message
+        StringBuilder message = new StringBuilder();
+        message.append(emoji).append(" *").append(formatEventType(eventType)).append("*\n\n");
+        message.append("*Title:* ").append(title).append("\n");
+        message.append("*Severity:* ").append(severityEmoji).append(" ").append(severity).append("\n");
+        message.append("*Status:* ").append(status).append("\n");
+
+        if (description != null && !description.isBlank()) {
+            message.append("*Description:* ").append(description).append("\n");
+        }
+
+        if (incidentId != null && !incidentId.isBlank()) {
+            message.append("*ID:* `").append(incidentId).append("`\n");
+        }
+
+        message.append("*Time:* ").append(Instant.now().toString());
+
+        payload.put("text", message.toString());
+        return payload;
+    }
+
+    /**
+     * Format event type to human-readable string.
+     */
+    private String formatEventType(WebhookEventType eventType) {
+        return switch (eventType) {
+            case INCIDENT_CREATED -> "Incident Created";
+            case INCIDENT_RESOLVED -> "Incident Resolved";
+            case INCIDENT_UPDATED -> "Incident Updated";
+            case INCIDENT_CLOSED -> "Incident Closed";
+            case INCIDENT_ASSIGNED -> "Incident Assigned";
+            case INCIDENT_UNASSIGNED -> "Incident Unassigned";
+            case INCIDENT_ESCALATED -> "Escalation Triggered";
+            case COMMENT_ADDED -> "Comment Added";
+        };
+    }
+
+    /**
      * Generate HMAC-SHA256 signature for payload verification.
      */
     private String generateSignature(String payload, String secret) {
@@ -214,9 +292,15 @@ public class WebhookService {
         Map<String, Object> testData = Map.of(
                 "message", "This is a test webhook delivery",
                 "webhookId", webhookId.toString(),
-                "timestamp", Instant.now().toString());
+                "timestamp", Instant.now().toString(),
+                "title", "Test Incident",
+                "severity", "LOW",
+                "status", "OPEN",
+                "description", "This is a test notification to verify webhook connectivity");
 
-        Map<String, Object> payload = buildPayload(WebhookEventType.INCIDENT_CREATED, testData);
+        Map<String, Object> payload = isSlackWebhook(webhook.url())
+                ? buildSlackPayload(WebhookEventType.INCIDENT_CREATED, testData)
+                : buildPayload(WebhookEventType.INCIDENT_CREATED, testData);
 
         try {
             String jsonPayload = objectMapper.writeValueAsString(payload);
