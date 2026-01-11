@@ -189,6 +189,11 @@ public class WebhookService {
         String status = (String) eventData.getOrDefault("status", "UNKNOWN");
         String description = (String) eventData.getOrDefault("description", "");
         String incidentId = (String) eventData.getOrDefault("id", "");
+        String assigneeName = (String) eventData.getOrDefault("assigneeName", null);
+        String assigneeEmail = (String) eventData.getOrDefault("assigneeEmail", null);
+        String assignedByName = (String) eventData.getOrDefault("assignedByName", null);
+        String resolvedByName = (String) eventData.getOrDefault("resolvedByName", null);
+        String resolutionTime = (String) eventData.getOrDefault("resolutionTime", null);
 
         // Build emoji based on event type and severity
         String emoji = switch (eventType) {
@@ -197,7 +202,7 @@ public class WebhookService {
             case INCIDENT_UPDATED -> "🔄";
             case INCIDENT_CLOSED -> "🔒";
             case INCIDENT_ASSIGNED -> "👤";
-            case INCIDENT_UNASSIGNED -> "👤";
+            case INCIDENT_UNASSIGNED -> "👋";
             case INCIDENT_ESCALATED -> "⚠️";
             case COMMENT_ADDED -> "💬";
         };
@@ -216,6 +221,33 @@ public class WebhookService {
         message.append("*Title:* ").append(title).append("\n");
         message.append("*Severity:* ").append(severityEmoji).append(" ").append(severity).append("\n");
         message.append("*Status:* ").append(status).append("\n");
+
+        // Add assignee info for assignment events
+        if (eventType == WebhookEventType.INCIDENT_ASSIGNED && assigneeName != null) {
+            message.append("*Assigned to:* ").append(assigneeName);
+            if (assigneeEmail != null && !assigneeEmail.isBlank()) {
+                message.append(" (").append(assigneeEmail).append(")");
+            }
+            message.append("\n");
+            if (assignedByName != null) {
+                message.append("*Assigned by:* ").append(assignedByName).append("\n");
+            }
+        }
+
+        // Add unassignment info
+        if (eventType == WebhookEventType.INCIDENT_UNASSIGNED && assigneeName != null) {
+            message.append("*Unassigned:* ").append(assigneeName).append("\n");
+        }
+
+        // Add resolver info for resolved events
+        if (eventType == WebhookEventType.INCIDENT_RESOLVED) {
+            if (resolvedByName != null) {
+                message.append("*Resolved by:* ").append(resolvedByName).append("\n");
+            }
+            if (resolutionTime != null) {
+                message.append("*Resolution time:* ").append(resolutionTime).append("\n");
+            }
+        }
 
         if (description != null && !description.isBlank()) {
             message.append("*Description:* ").append(description).append("\n");

@@ -11,6 +11,8 @@ public interface IncidentRepository {
 
     Incident save(Incident incident);
 
+    Optional<Incident> findById(UUID id);
+
     Optional<Incident> findByIdAndTenantId(UUID id, UUID tenantId);
 
     List<Incident> findByTenantId(UUID tenantId);

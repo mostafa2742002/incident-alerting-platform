@@ -2,9 +2,12 @@ package com.example.incidentplatform.application.service;
 
 import com.example.incidentplatform.application.port.IncidentAssignmentRepository;
 import com.example.incidentplatform.application.port.IncidentRepository;
+import com.example.incidentplatform.application.port.UserRepository;
 import com.example.incidentplatform.common.error.ConflictException;
 import com.example.incidentplatform.common.error.NotFoundException;
+import com.example.incidentplatform.domain.model.incident.Incident;
 import com.example.incidentplatform.domain.model.incident.IncidentAssignment;
+import com.example.incidentplatform.domain.model.incident.Severity;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -36,7 +38,12 @@ class IncidentAssignmentServiceTest {
     @Mock
     private IncidentRepository incidentRepository;
 
-    @InjectMocks
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private WebhookService webhookService;
+
     private IncidentAssignmentService assignmentService;
 
     @Captor
@@ -46,6 +53,8 @@ class IncidentAssignmentServiceTest {
     private UUID assigneeId;
     private UUID assignedBy;
     private UUID assignmentId;
+    private UUID tenantId;
+    private Incident testIncident;
 
     @BeforeEach
     void setUp() {
@@ -53,6 +62,11 @@ class IncidentAssignmentServiceTest {
         assigneeId = UUID.randomUUID();
         assignedBy = UUID.randomUUID();
         assignmentId = UUID.randomUUID();
+        tenantId = UUID.randomUUID();
+        testIncident = Incident.createNew(tenantId, "Test Incident", "Test description", Severity.HIGH, assignedBy);
+
+        assignmentService = new IncidentAssignmentService(assignmentRepository, incidentRepository, userRepository,
+                webhookService);
     }
 
     @Nested
@@ -64,7 +78,7 @@ class IncidentAssignmentServiceTest {
         void shouldAssignUserSuccessfully() {
             // Given
             String notes = "Primary responder";
-            when(incidentRepository.existsById(incidentId)).thenReturn(true);
+            when(incidentRepository.findById(incidentId)).thenReturn(Optional.of(testIncident));
             when(assignmentRepository.isUserAssigned(incidentId, assigneeId)).thenReturn(false);
             when(assignmentRepository.save(any(IncidentAssignment.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -86,7 +100,7 @@ class IncidentAssignmentServiceTest {
         @DisplayName("should throw NotFoundException when incident does not exist")
         void shouldThrowWhenIncidentNotFound() {
             // Given
-            when(incidentRepository.existsById(incidentId)).thenReturn(false);
+            when(incidentRepository.findById(incidentId)).thenReturn(Optional.empty());
 
             // When/Then
             assertThatThrownBy(() -> assignmentService.assignUser(incidentId, assigneeId, assignedBy, null))
@@ -100,7 +114,7 @@ class IncidentAssignmentServiceTest {
         @DisplayName("should throw ConflictException when user already assigned")
         void shouldThrowWhenUserAlreadyAssigned() {
             // Given
-            when(incidentRepository.existsById(incidentId)).thenReturn(true);
+            when(incidentRepository.findById(incidentId)).thenReturn(Optional.of(testIncident));
             when(assignmentRepository.isUserAssigned(incidentId, assigneeId)).thenReturn(true);
 
             // When/Then
@@ -121,6 +135,7 @@ class IncidentAssignmentServiceTest {
         void shouldUnassignUserSuccessfully() {
             // Given
             IncidentAssignment active = createAssignment(assignmentId, incidentId, assigneeId, assignedBy, null);
+            when(incidentRepository.findById(incidentId)).thenReturn(Optional.of(testIncident));
             when(assignmentRepository.findActiveAssignment(incidentId, assigneeId)).thenReturn(Optional.of(active));
             when(assignmentRepository.save(any(IncidentAssignment.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -139,6 +154,7 @@ class IncidentAssignmentServiceTest {
         @DisplayName("should throw NotFoundException when no active assignment found")
         void shouldThrowWhenNoActiveAssignment() {
             // Given
+            when(incidentRepository.findById(incidentId)).thenReturn(Optional.of(testIncident));
             when(assignmentRepository.findActiveAssignment(incidentId, assigneeId)).thenReturn(Optional.empty());
 
             // When/Then

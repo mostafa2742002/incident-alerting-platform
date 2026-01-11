@@ -124,9 +124,36 @@ else
 fi
 
 # =============================================================================
-# STEP 4: REGISTER ANOTHER USER (Developer)
+# STEP 4: CREATE WEBHOOK EARLY (to capture all events)
 # =============================================================================
-print_header "STEP 4: REGISTER ANOTHER USER (Developer)"
+print_header "STEP 4: CREATE WEBHOOK (Slack Integration)"
+
+print_info "Creating webhook for Slack integration..."
+print_info "Events: INCIDENT_CREATED, INCIDENT_RESOLVED, INCIDENT_UPDATED, INCIDENT_ASSIGNED, INCIDENT_UNASSIGNED, INCIDENT_ESCALATED"
+WEBHOOK_RESPONSE=$(curl -s -X POST "$BASE_URL/tenants/$TENANT_ID/webhooks" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -d '{
+    "name": "Slack Notifications",
+    "url": "'"$SLACK_WEBHOOK_URL"'",
+    "secret": "my-webhook-secret-key",
+    "events": ["INCIDENT_CREATED", "INCIDENT_RESOLVED", "INCIDENT_UPDATED", "INCIDENT_ASSIGNED", "INCIDENT_UNASSIGNED", "INCIDENT_ESCALATED"]
+  }')
+
+echo "$WEBHOOK_RESPONSE" | jq .
+
+WEBHOOK_ID=$(echo "$WEBHOOK_RESPONSE" | jq -r '.id')
+if [ "$WEBHOOK_ID" != "null" ] && [ -n "$WEBHOOK_ID" ]; then
+    print_success "Webhook created: $WEBHOOK_ID"
+    print_info "🔔 All incident events will now be sent to Slack!"
+else
+    print_info "Webhook creation skipped (may already exist or invalid URL)"
+fi
+
+# =============================================================================
+# STEP 5: REGISTER ANOTHER USER (Developer)
+# =============================================================================
+print_header "STEP 5: REGISTER ANOTHER USER (Developer)"
 
 DEV_EMAIL="developer-$(date +%s)@techcorp.com"
 print_info "Registering developer user '$DEV_EMAIL'..."
@@ -156,9 +183,9 @@ curl -s -X POST "$BASE_URL/tenants/$TENANT_ID/users" \
 print_success "Developer added to tenant"
 
 # =============================================================================
-# STEP 5: CREATE INCIDENTS
+# STEP 6: CREATE INCIDENTS
 # =============================================================================
-print_header "STEP 5: CREATE INCIDENTS"
+print_header "STEP 6: CREATE INCIDENTS"
 
 print_info "Creating CRITICAL incident..."
 INCIDENT1_RESPONSE=$(curl -s -X POST "$BASE_URL/tenants/$TENANT_ID/incidents" \
@@ -206,18 +233,18 @@ INCIDENT3_ID=$(echo "$INCIDENT3_RESPONSE" | jq -r '.id')
 print_success "Medium Incident created: $INCIDENT3_ID"
 
 # =============================================================================
-# STEP 6: LIST ALL INCIDENTS
+# STEP 7: LIST ALL INCIDENTS
 # =============================================================================
-print_header "STEP 6: LIST ALL INCIDENTS"
+print_header "STEP 7: LIST ALL INCIDENTS"
 
 print_info "Fetching all incidents..."
 curl -s -X GET "$BASE_URL/tenants/$TENANT_ID/incidents" \
   -H "Authorization: Bearer $ACCESS_TOKEN" | jq .
 
 # =============================================================================
-# STEP 7: UPDATE INCIDENT STATUS
+# STEP 8: UPDATE INCIDENT STATUS
 # =============================================================================
-print_header "STEP 7: UPDATE INCIDENT STATUS"
+print_header "STEP 8: UPDATE INCIDENT STATUS"
 
 print_info "Changing incident status to IN_PROGRESS..."
 curl -s -X PUT "$BASE_URL/tenants/$TENANT_ID/incidents/$INCIDENT1_ID/status" \
@@ -230,9 +257,9 @@ curl -s -X PUT "$BASE_URL/tenants/$TENANT_ID/incidents/$INCIDENT1_ID/status" \
 print_success "Incident status updated to IN_PROGRESS"
 
 # =============================================================================
-# STEP 8: ADD COMMENTS TO INCIDENT
+# STEP 9: ADD COMMENTS TO INCIDENT
 # =============================================================================
-print_header "STEP 8: ADD COMMENTS TO INCIDENT"
+print_header "STEP 9: ADD COMMENTS TO INCIDENT"
 
 print_info "Adding first comment..."
 COMMENT1_RESPONSE=$(curl -s -X POST "$BASE_URL/tenants/$TENANT_ID/incidents/$INCIDENT1_ID/comments" \
@@ -261,18 +288,18 @@ echo "$COMMENT2_RESPONSE" | jq .
 print_success "Comment 2 added"
 
 # =============================================================================
-# STEP 9: LIST COMMENTS FOR INCIDENT
+# STEP 10: LIST COMMENTS FOR INCIDENT
 # =============================================================================
-print_header "STEP 9: LIST COMMENTS FOR INCIDENT"
+print_header "STEP 10: LIST COMMENTS FOR INCIDENT"
 
 print_info "Fetching all comments for incident..."
 curl -s -X GET "$BASE_URL/tenants/$TENANT_ID/incidents/$INCIDENT1_ID/comments" \
   -H "Authorization: Bearer $ACCESS_TOKEN" | jq .
 
 # =============================================================================
-# STEP 10: UPDATE A COMMENT
+# STEP 11: UPDATE A COMMENT
 # =============================================================================
-print_header "STEP 10: UPDATE A COMMENT"
+print_header "STEP 11: UPDATE A COMMENT"
 
 if [ "$COMMENT1_ID" != "null" ] && [ -n "$COMMENT1_ID" ]; then
     print_info "Updating comment..."
@@ -288,34 +315,34 @@ else
 fi
 
 # =============================================================================
-# STEP 11: ASSIGN USER TO INCIDENT
+# STEP 12: ASSIGN USER TO INCIDENT
 # =============================================================================
-print_header "STEP 11: ASSIGN USER TO INCIDENT"
+print_header "STEP 12: ASSIGN USER TO INCIDENT"
 
 print_info "Assigning developer to incident..."
-curl -s -X POST "$BASE_URL/tenants/$TENANT_ID/incidents/$INCIDENT1_ID/assignments" \
+curl -s -X POST "http://localhost:8081/api/incidents/$INCIDENT1_ID/assignments" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -d "{
-    \"userId\": \"$DEVELOPER_ID\",
-    \"assignedBy\": \"$OWNER_ID\"
+    \"assigneeId\": \"$DEVELOPER_ID\",
+    \"notes\": \"Initial assignment\"
   }" | jq .
 
 print_success "Developer assigned to incident"
 
 # =============================================================================
-# STEP 12: LIST ASSIGNMENTS FOR INCIDENT
+# STEP 13: LIST ASSIGNMENTS FOR INCIDENT
 # =============================================================================
-print_header "STEP 12: LIST ASSIGNMENTS FOR INCIDENT"
+print_header "STEP 13: LIST ASSIGNMENTS FOR INCIDENT"
 
 print_info "Fetching assignments..."
-curl -s -X GET "$BASE_URL/tenants/$TENANT_ID/incidents/$INCIDENT1_ID/assignments" \
+curl -s -X GET "http://localhost:8081/api/incidents/$INCIDENT1_ID/assignments" \
   -H "Authorization: Bearer $ACCESS_TOKEN" | jq .
 
 # =============================================================================
-# STEP 13: CHECK NOTIFICATIONS (for Developer who was assigned)
+# STEP 14: CHECK NOTIFICATIONS (for Developer who was assigned)
 # =============================================================================
-print_header "STEP 13: CHECK NOTIFICATIONS"
+print_header "STEP 14: CHECK NOTIFICATIONS"
 
 print_info "Fetching notifications for developer..."
 curl -s -X GET "$BASE_URL/notifications/user/$DEVELOPER_ID" \
@@ -327,36 +354,15 @@ UNREAD_COUNT=$(curl -s -X GET "$BASE_URL/notifications/user/$DEVELOPER_ID/unread
 echo "$UNREAD_COUNT" | jq .
 
 # =============================================================================
-# STEP 14: MARK NOTIFICATIONS AS READ
+# STEP 15: MARK NOTIFICATIONS AS READ
 # =============================================================================
-print_header "STEP 14: MARK NOTIFICATIONS AS READ"
+print_header "STEP 15: MARK NOTIFICATIONS AS READ"
 
 print_info "Marking all notifications as read..."
 curl -s -X PUT "$BASE_URL/notifications/user/$DEVELOPER_ID/read-all" \
   -H "Authorization: Bearer $ACCESS_TOKEN" | jq .
 
 print_success "All notifications marked as read"
-
-# =============================================================================
-# STEP 15: CREATE WEBHOOK (Slack Integration)
-# =============================================================================
-print_header "STEP 15: CREATE WEBHOOK (Slack Integration)"
-
-print_info "Creating webhook for Slack integration..."
-WEBHOOK_RESPONSE=$(curl -s -X POST "$BASE_URL/tenants/$TENANT_ID/webhooks" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $ACCESS_TOKEN" \
-  -d '{
-    "name": "Slack Notifications",
-    "url": "'"$SLACK_WEBHOOK_URL"'",
-    "secret": "my-webhook-secret-key",
-    "events": ["INCIDENT_CREATED", "INCIDENT_RESOLVED", "INCIDENT_UPDATED"]
-  }')
-
-echo "$WEBHOOK_RESPONSE" | jq .
-
-WEBHOOK_ID=$(echo "$WEBHOOK_RESPONSE" | jq -r '.id')
-print_success "Webhook created: $WEBHOOK_ID"
 
 # =============================================================================
 # STEP 16: LIST WEBHOOKS
@@ -378,6 +384,8 @@ if [ "$WEBHOOK_ID" != "null" ] && [ -n "$WEBHOOK_ID" ]; then
       -H "Authorization: Bearer $ACCESS_TOKEN")
     echo "$TEST_RESPONSE" | jq .
     print_info "Check your Slack channel for the test message!"
+else
+    print_info "Skipping webhook test (no webhook ID available)"
 fi
 
 # =============================================================================
@@ -396,27 +404,59 @@ NEW_INCIDENT_RESPONSE=$(curl -s -X POST "$BASE_URL/tenants/$TENANT_ID/incidents"
   }')
 
 echo "$NEW_INCIDENT_RESPONSE" | jq .
-print_success "Incident created - Check Slack for webhook notification!"
+NEW_INCIDENT_ID=$(echo "$NEW_INCIDENT_RESPONSE" | jq -r '.id')
+print_success "Incident created: $NEW_INCIDENT_ID - Check Slack for 🚨 INCIDENT CREATED notification!"
 
 # =============================================================================
-# STEP 19: RESOLVE INCIDENT
+# STEP 19: ASSIGN USER TO NEW INCIDENT (WEBHOOK TRIGGER)
 # =============================================================================
-print_header "STEP 19: RESOLVE INCIDENT"
+print_header "STEP 19: ASSIGN USER TO INCIDENT (WEBHOOK TRIGGER)"
 
-print_info "Resolving incident (should trigger Slack webhook)..."
-curl -s -X PUT "$BASE_URL/tenants/$TENANT_ID/incidents/$INCIDENT1_ID/resolve" \
+print_info "Assigning developer to the new incident..."
+print_info "This should trigger Slack webhook with 👤 INCIDENT ASSIGNED notification!"
+ASSIGN_RESPONSE=$(curl -s -X POST "http://localhost:8081/api/incidents/$NEW_INCIDENT_ID/assignments" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -d "{
+    \"assigneeId\": \"$DEVELOPER_ID\",
+    \"notes\": \"Please investigate this payment gateway issue ASAP\"
+  }")
+
+echo "$ASSIGN_RESPONSE" | jq .
+print_success "Developer assigned - Check Slack for 👤 assignment notification with assignee name!"
+
+# =============================================================================
+# STEP 20: ESCALATE INCIDENT (WEBHOOK TRIGGER)
+# =============================================================================
+print_header "STEP 20: ESCALATE INCIDENT (WEBHOOK TRIGGER)"
+
+print_info "Escalating incident severity..."
+print_info "This should trigger Slack webhook with ⚠️ ESCALATION notification!"
+curl -s -X POST "$BASE_URL/tenants/$TENANT_ID/incidents/$NEW_INCIDENT_ID/escalate" \
+  -H "Authorization: Bearer $ACCESS_TOKEN" | jq .
+
+print_success "Incident escalated - Check Slack for ⚠️ escalation notification!"
+
+# =============================================================================
+# STEP 21: RESOLVE INCIDENT (WEBHOOK TRIGGER)
+# =============================================================================
+print_header "STEP 21: RESOLVE INCIDENT (WEBHOOK TRIGGER)"
+
+print_info "Resolving incident..."
+print_info "This should trigger Slack webhook with ✅ RESOLVED notification including resolution time!"
+curl -s -X PATCH "$BASE_URL/tenants/$TENANT_ID/incidents/$NEW_INCIDENT_ID" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -d '{
-    "resolutionSummary": "Increased database connection pool from 50 to 200. Issue resolved."
+    "status": "RESOLVED"
   }' | jq .
 
-print_success "Incident resolved - Check Slack for webhook notification!"
+print_success "Incident resolved - Check Slack for ✅ notification with resolution time!"
 
 # =============================================================================
-# STEP 20: VIEW ANALYTICS
+# STEP 22: VIEW ANALYTICS
 # =============================================================================
-print_header "STEP 20: VIEW ANALYTICS"
+print_header "STEP 22: VIEW ANALYTICS"
 
 print_info "Fetching incident analytics..."
 curl -s -X GET "$BASE_URL/tenants/$TENANT_ID/incidents/analytics" \
@@ -431,9 +471,9 @@ curl -s -X GET "$BASE_URL/tenants/$TENANT_ID/incidents/analytics/mttr" \
   -H "Authorization: Bearer $ACCESS_TOKEN" | jq .
 
 # =============================================================================
-# STEP 21: SEARCH INCIDENTS
+# STEP 23: SEARCH INCIDENTS
 # =============================================================================
-print_header "STEP 21: SEARCH INCIDENTS"
+print_header "STEP 23: SEARCH INCIDENTS"
 
 print_info "Searching for 'database' incidents..."
 curl -s -X GET "$BASE_URL/tenants/$TENANT_ID/incidents/search?keyword=database" \
@@ -448,9 +488,9 @@ curl -s -X GET "$BASE_URL/tenants/$TENANT_ID/incidents/search?status=OPEN" \
   -H "Authorization: Bearer $ACCESS_TOKEN" | jq .
 
 # =============================================================================
-# STEP 22: CHECK WEBHOOK DELIVERIES
+# STEP 24: CHECK WEBHOOK DELIVERIES
 # =============================================================================
-print_header "STEP 22: CHECK WEBHOOK DELIVERIES"
+print_header "STEP 24: CHECK WEBHOOK DELIVERIES"
 
 if [ "$WEBHOOK_ID" != "null" ] && [ -n "$WEBHOOK_ID" ]; then
     print_info "Fetching webhook delivery history..."
@@ -459,9 +499,9 @@ if [ "$WEBHOOK_ID" != "null" ] && [ -n "$WEBHOOK_ID" ]; then
 fi
 
 # =============================================================================
-# STEP 23: REFRESH TOKEN
+# STEP 25: REFRESH TOKEN
 # =============================================================================
-print_header "STEP 23: REFRESH TOKEN"
+print_header "STEP 25: REFRESH TOKEN"
 
 print_info "Refreshing access token..."
 REFRESH_RESPONSE=$(curl -s -X POST "$BASE_URL/auth/refresh" \
@@ -481,18 +521,18 @@ else
 fi
 
 # =============================================================================
-# STEP 24: GET TENANT DETAILS
+# STEP 26: GET TENANT DETAILS
 # =============================================================================
-print_header "STEP 24: GET TENANT DETAILS"
+print_header "STEP 26: GET TENANT DETAILS"
 
 print_info "Fetching tenant information..."
 curl -s -X GET "$BASE_URL/tenants/$TENANT_ID" \
   -H "Authorization: Bearer $ACCESS_TOKEN" | jq .
 
 # =============================================================================
-# STEP 25: LIST TENANT MEMBERS
+# STEP 27: LIST TENANT MEMBERS
 # =============================================================================
-print_header "STEP 25: LIST TENANT MEMBERS"
+print_header "STEP 27: LIST TENANT MEMBERS"
 
 print_info "Fetching all tenant members..."
 curl -s -X GET "$BASE_URL/tenants/$TENANT_ID/users" \

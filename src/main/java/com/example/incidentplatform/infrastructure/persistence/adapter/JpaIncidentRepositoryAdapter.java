@@ -31,6 +31,11 @@ public class JpaIncidentRepositoryAdapter implements IncidentRepository {
     }
 
     @Override
+    public Optional<Incident> findById(UUID id) {
+        return jpaRepository.findById(id).map(mapper::toDomain);
+    }
+
+    @Override
     public Optional<Incident> findByIdAndTenantId(UUID id, UUID tenantId) {
         return jpaRepository.findById(id)
                 .filter(entity -> entity.getTenantId().equals(tenantId))

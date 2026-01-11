@@ -1,6 +1,7 @@
 package com.example.incidentplatform.application.service;
 
 import com.example.incidentplatform.application.port.IncidentRepository;
+import com.example.incidentplatform.application.port.UserRepository;
 import com.example.incidentplatform.common.error.NotFoundException;
 import com.example.incidentplatform.domain.model.incident.Incident;
 import com.example.incidentplatform.domain.model.incident.IncidentStatus;
@@ -29,11 +30,17 @@ class IncidentServiceTest {
         @Mock
         private IncidentRepository incidentRepository;
 
+        @Mock
+        private WebhookService webhookService;
+
+        @Mock
+        private UserRepository userRepository;
+
         private IncidentService incidentService;
 
         @BeforeEach
         void setup() {
-                incidentService = new IncidentService(incidentRepository);
+                incidentService = new IncidentService(incidentRepository, webhookService, userRepository);
         }
 
         @Test
