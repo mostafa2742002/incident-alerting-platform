@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/PostgreSQL-16-316192?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL"/>
   <img src="https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker"/>
   <img src="https://img.shields.io/badge/Architecture-Hexagonal-FF6B6B?style=for-the-badge" alt="Hexagonal"/>
-  <img src="https://img.shields.io/badge/Tests-157+-4CAF50?style=for-the-badge" alt="Tests"/>
+  <img src="https://img.shields.io/badge/Tests-165+-4CAF50?style=for-the-badge" alt="Tests"/>
 </p>
 
 <h1 align="center">🚨 Incident Alerting Platform</h1>
@@ -84,10 +84,12 @@ The **Incident Alerting Platform** is a comprehensive solution for managing inci
 
 ### 🔗 Webhook Integration
 - Configurable webhooks per tenant
-- Event-driven triggers (Incident Created, Updated, Resolved, etc.)
+- Event-driven triggers (Incident Created, Updated, Resolved, Escalated, Assigned, Unassigned)
+- **Rich Slack notifications** with assignee details (name, email, who assigned)
 - **HMAC-SHA256 signature verification** for security
 - Delivery tracking with retry support
 - Auto-disable after consecutive failures
+- Resolution time calculation (formatted duration)
 
 ### 📈 Analytics & Reporting
 - Real-time incident statistics
@@ -191,18 +193,44 @@ This project follows **Hexagonal Architecture** (Ports & Adapters) combined with
 git clone https://github.com/mostafa2742002/incident-alerting-platform.git
 cd incident-alerting-platform
 
-# 2. Start PostgreSQL with Docker
+# 2. Configure environment variables (optional)
+cp .env.example .env
+# Edit .env with your Slack webhook URL for notifications
+
+# 3. Start PostgreSQL with Docker
 docker-compose up -d
 
-# 3. Run the application
+# 4. Run the application
 ./mvnw spring-boot:run
 
-# 4. Access the API
+# 5. Access the API
 curl http://localhost:8081/api/public/tenants
+
+# 6. Run the test script (optional)
+export SLACK_WEBHOOK_URL="your-slack-webhook-url"
+./test-api.sh
 ```
 
 ### Environment Configuration
 
+Copy `.env.example` to `.env` and configure:
+
+```bash
+# Slack Integration (for webhook notifications to Slack)
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/WEBHOOK/URL
+
+# Database (defaults work with docker-compose)
+POSTGRES_HOST=localhost
+POSTGRES_PORT=15432
+POSTGRES_DB=incident_platform
+
+# JWT Configuration
+JWT_SECRET=your-256-bit-secret-key
+JWT_EXPIRATION=3600000
+JWT_REFRESH_EXPIRATION=604800000
+```
+
+**application.properties:**
 ```properties
 # Database
 spring.datasource.url=jdbc:postgresql://localhost:15432/incident_platform
@@ -475,17 +503,17 @@ src/
 ### Test Coverage
 
 ```
-Total Tests: 157+
-├── Service Layer Tests      ~70 tests
+Total Tests: 165+
+├── Service Layer Tests      ~75 tests
 ├── Controller Layer Tests   ~60 tests
 ├── Domain Model Tests       ~15 tests
-└── Integration Tests        ~12 tests
+└── Integration Tests        ~15 tests
 ```
 
 ### Running Tests
 
 ```bash
-# Run all tests
+# Run all unit tests
 ./mvnw test
 
 # Run specific test class
@@ -494,6 +522,26 @@ Total Tests: 157+
 # Run with coverage report
 ./mvnw test jacoco:report
 ```
+
+### API Test Script
+
+A comprehensive test script is included to verify all API endpoints:
+
+```bash
+# Set your Slack webhook URL for notification testing
+export SLACK_WEBHOOK_URL="https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+
+# Run the full API test suite (27 steps)
+./test-api.sh
+```
+
+The test script covers:
+- Tenant creation and user registration
+- Authentication flow (login, token refresh)
+- Incident lifecycle (create, update, resolve, escalate)
+- Comments and assignments
+- Webhook creation and notification delivery
+- Analytics endpoints
 
 ### Test Philosophy
 
@@ -538,7 +586,7 @@ Total Tests: 157+
 
 - [ ] **Escalation Policies** — Automated incident escalation based on time/severity
 - [ ] **Email Notifications** — SMTP integration for email alerts
-- [ ] **Slack Integration** — Native Slack app for notifications
+- [x] **Slack Integration** — Webhook notifications with rich message formatting ✅
 - [ ] **Audit Logging** — Complete audit trail for compliance
 - [ ] **API Rate Limiting** — Protect against abuse
 - [ ] **OpenAPI/Swagger UI** — Interactive API documentation
